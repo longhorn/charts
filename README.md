@@ -6,7 +6,7 @@ This repository contains the charts used for installing Longhorn using Helm. Cur
 
 ## Adding the Chart
 ```
-$ helm repo add longhorn https://longhorn.github.io/charts
+$ helm repo add longhorn https://charts.longhorn.io
 $ helm repo update
 ```
 
