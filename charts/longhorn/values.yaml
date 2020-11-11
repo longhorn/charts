@@ -25,14 +25,14 @@ persistence:
   defaultClass: true
   defaultClassReplicaCount: 3
   recurringJobs:
-    #- name: snap
-    #  task: snapshot
-    #  cron: '*/1 * * * *'
-    #  retain: 1
-    #- name: backup
-    #  task: backup
-    #  cron: '*/2 * * * *'
-    #  retain: 1
+    - name: snap
+      task: snapshot
+      cron: '*/1 * * * *'
+      retain: 1
+    - name: backup
+      task: backup
+      cron: '*/2 * * * *'
+      retain: 1
 
 
 csi:

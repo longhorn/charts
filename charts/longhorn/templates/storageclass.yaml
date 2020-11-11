@@ -15,3 +15,4 @@ parameters:
   recurringJobs: '{{ toJson .Values.persistence.recurringJobs }}'
   {{ end }}
   baseImage: ""
+  
