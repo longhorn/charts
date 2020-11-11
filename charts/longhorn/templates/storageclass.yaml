@@ -11,4 +11,7 @@ parameters:
   numberOfReplicas: "{{ .Values.persistence.defaultClassReplicaCount }}"
   staleReplicaTimeout: "30"
   fromBackup: ""
+  {{ if .Values.persistence.recurringJobs  }}
+  recurringJobs: '{{ toJson .Values.persistence.recurringJobs }}'
+  {{ end }}
   baseImage: ""
