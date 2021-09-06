@@ -36,7 +36,7 @@ spec:
       {{- end }}
       {{- if .Values.longhornUI.tolerations }}
       tolerations:
-{{ toYaml .Values.longhornManager.tolerations | indent 6 }}
+{{ toYaml .Values.longhornUI.tolerations | indent 6 }}
       {{- end }}
       {{- if .Values.longhornUI.nodeSelector }}
       nodeSelector:
