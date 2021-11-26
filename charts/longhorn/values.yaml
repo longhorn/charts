@@ -226,3 +226,20 @@ namespaceOverride: ""
 
 # Annotations to add to the Longhorn Manager DaemonSet Pods. Optional.
 annotations: {}
+
+serviceMonitor:
+  enabled: true
+  labels:
+    name: longhorn-prometheus-servicemonitor
+  matchNamespaces:
+    - longhorn-system
+
+prometheusRule:
+  enabled: true
+  labels:
+    name: longhorn-prometheus-servicemonitor
+  defaultRules:
+    enabled: true
+  matchNamespaces:
+    - longhorn-system
+  additionalRules: []
