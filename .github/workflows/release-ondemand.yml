@@ -14,7 +14,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       with:
-        ref: "${{ github.event.branch }}"
+        ref: "${{ github.event.inputs.branch }}"
 
     - name: Fetch history
       run: git fetch --prune --unshallow
