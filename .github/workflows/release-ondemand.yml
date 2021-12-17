@@ -1,0 +1,37 @@
+name: Release Charts on demand
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Release branch'
+        required: true
+
+jobs:
+  release:
+    runs-on: self-hosted
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        ref: "${{ github.event.inputs.branch }}"
+
+    - name: Fetch history
+      run: git fetch --prune --unshallow
+
+    - name: Install Helm
+      run: |
+        curl -fsSLo get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+        chmod 700 get_helm.sh
+        ./get_helm.sh
+
+    - name: Configure Git
+      run: |
+        git config user.name "$GITHUB_ACTOR"
+        git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+        cat ./charts/longhorn/Chart.yaml
+
+    - name: Run chart-releaser
+      uses: helm/chart-releaser-action@v1.0.0
+      env:
+        CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
