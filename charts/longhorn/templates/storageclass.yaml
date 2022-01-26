@@ -14,11 +14,12 @@ data:
         storageclass.kubernetes.io/is-default-class: {{ .Values.persistence.defaultClass | quote }}
     provisioner: driver.longhorn.io
     allowVolumeExpansion: true
-    reclaimPolicy: "{{ .Values.persistence.reclaimPolicy }}"
+    reclaimPolicy: {{ .Values.persistence.reclaimPolicy | quote }}
     volumeBindingMode: Immediate
     parameters:
-      numberOfReplicas: "{{ .Values.persistence.defaultClassReplicaCount }}"
+      numberOfReplicas: {{ .Values.persistence.defaultClassReplicaCount | quote }}
       staleReplicaTimeout: "30"
+      dataLocality: {{ .Values.persistence.defaultDataLocality | quote }}
       fromBackup: ""
       {{- if .Values.persistence.defaultFsType }}
       fsType: "{{.Values.persistence.defaultFsType}}"
