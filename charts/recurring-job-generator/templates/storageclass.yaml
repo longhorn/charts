@@ -1,0 +1,36 @@
+{{- if .Values.createStorageClasses -}}
+{{- range $group, $property := .Values.groups -}}
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: longhorn-{{ lower $group }}
+provisioner: driver.longhorn.io
+{{- /* We can't use 'default' because unset evaluates to false */}}
+{{ $allowVolumeExpansion := false }}
+{{- if eq $property.allowVolumeExpansion false -}}
+  {{- $allowVolumeExpansion = false -}}
+{{- else if eq $property.allowVolumeExpansion true -}}
+  {{- $allowVolumeExpansion = true -}}
+{{- else -}}
+  {{- $allowVolumeExpansion = $.Values.allowVolumeExpansion -}}
+{{- end -}}
+allowVolumeExpansion: {{ $allowVolumeExpansion }}
+reclaimPolicy: "{{ $property.reclaimPolicy | default $.Values.reclaimPolicy }}"
+parameters:
+{{- /* Set parameters if they're specified at the top level OR for this specific group */}}
+{{- if or (not (empty $.Values.parameters)) (not (empty $property.parameters)) -}}
+  {{- $parameters := mergeOverwrite dict ($.Values.parameters | default dict) ($property.parameters | default dict) -}}
+  {{- range $key, $value := $parameters }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end -}}
+{{ end }}
+  recurringJobSelector: >-
+    [
+      {
+      "name":"{{ $group }}",
+      "isGroup":true
+      }
+    ]
+---
+{{ end }}
+{{- end -}}

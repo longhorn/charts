@@ -1,0 +1,18 @@
+apiVersion: v2
+name: recurring-jobs-generator
+description: Longhorn Recurring Jobs Generator
+type: application
+version: 1.0.0
+kubeVersion: ">=1.18.0-0"
+keywords:
+- longhorn
+- storage
+- distributed
+- block
+- device
+- iscsi
+- nfs
+maintainers:
+- name: Longhorn maintainers
+  email: maintainers@longhorn.io
+icon: https://raw.githubusercontent.com/cncf/artwork/master/projects/longhorn/icon/color/longhorn-icon-color.png
