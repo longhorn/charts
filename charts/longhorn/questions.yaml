@@ -17,7 +17,7 @@ questions:
     label: Longhorn Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.manager.tag
-    default: v1.2.4
+    default: v1.3.0
     description: "Specify Longhorn Manager Image Tag"
     type: string
     label: Longhorn Manager Image Tag
@@ -29,7 +29,7 @@ questions:
     label: Longhorn Engine Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.engine.tag
-    default: v1.2.4
+    default: v1.3.0
     description: "Specify Longhorn Engine Image Tag"
     type: string
     label: Longhorn Engine Image Tag
@@ -41,7 +41,7 @@ questions:
     label: Longhorn UI Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.ui.tag
-    default: v1.2.4
+    default: v1.3.0
     description: "Specify Longhorn UI Image Tag"
     type: string
     label: Longhorn UI Image Tag
@@ -53,7 +53,7 @@ questions:
     label: Longhorn Instance Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.instanceManager.tag
-    default: v1_20220303
+    default: v1_20220611
     description: "Specify Longhorn Instance Manager Image Tag"
     type: string
     label: Longhorn Instance Manager Image Tag
@@ -65,7 +65,7 @@ questions:
     label: Longhorn Share Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.shareManager.tag
-    default: v1_20211020
+    default: v1_20220531
     description: "Specify Longhorn Share Manager Image Tag"
     type: string
     label: Longhorn Share Manager Image Tag
@@ -77,7 +77,7 @@ questions:
     label: Longhorn Backing Image Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.backingImageManager.tag
-    default: v2_20210820
+    default: v3_20220609
     description: "Specify Longhorn Backing Image Manager Image Tag"
     type: string
     label: Longhorn Backing Image Manager Image Tag
@@ -148,24 +148,30 @@ questions:
   group: "Private Registry Settings"
   type: string
   default: ""
-- variable: privateRegistry.registryUser
-  label: Private registry user
-  description: "User used to authenticate to private registry"
-  group: "Private Registry Settings"
-  type: string
-  default: ""
-- variable: privateRegistry.registryPasswd
-  label: Private registry password
-  description: "Password used to authenticate to private registry"
-  group: "Private Registry Settings"
-  type: password
-  default: ""
 - variable: privateRegistry.registrySecret
   label: Private registry secret name
-  description: "Longhorn will automatically generate a Kubernetes secret with this name and use it to pull images from your private registry."
+  description: "If create a new private registry secret is true, create a Kubernetes secret with this name; else use the existing secret of this name. Use it to pull images from your private registry."
   group: "Private Registry Settings"
   type: string
   default: ""
+- variable: privateRegistry.createSecret
+  default: "true"
+  description: "Create a new private registry secret"
+  type: boolean
+  group: "Private Registry Settings"
+  label: Create Secret for Private Registry Settings
+  show_subquestion_if: true
+  subquestions:
+  - variable: privateRegistry.registryUser
+    label: Private registry user
+    description: "User used to authenticate to private registry."
+    type: string
+    default: ""
+  - variable: privateRegistry.registryPasswd
+    label: Private registry password
+    description: "Password used to authenticate to private registry."
+    type: password
+    default: ""
 - variable: longhorn.default_setting
   default: "false"
   description: "Customize the default settings before installing Longhorn for the first time. This option will only work if the cluster hasn't installed Longhorn."
@@ -405,7 +411,7 @@ WARNING:
     default: 5
   - variable: defaultSettings.disableRevisionCounter
     label: Disable Revision Counter
-    description: "This setting is only for volumes created by UI. By default, this is false meaning there will be a reivision counter file to track every write to the volume. During salvage recovering Longhorn will pick the repica with largest reivision counter as candidate to recover the whole volume. If revision counter is disabled, Longhorn will not track every write to the volume. During the salvage recovering, Longhorn will use the 'volume-head-xxx.img' file last modification time and file size to pick the replica candidate to recover the whole volume."
+    description: "This setting is only for volumes created by UI. By default, this is false meaning there will be a reivision counter file to track every write to the volume. During salvage recovering Longhorn will pick the replica with largest reivision counter as candidate to recover the whole volume. If revision counter is disabled, Longhorn will not track every write to the volume. During the salvage recovering, Longhorn will use the 'volume-head-xxx.img' file last modification time and file size to pick the replica candidate to recover the whole volume."
     group: "Longhorn Default Settings"
     type: boolean
     default: "false"
@@ -491,6 +497,34 @@ WARNING:
     min: 0
     max: 40
     default: 12
+- variable: defaultSettings.kubernetesClusterAutoscalerEnabled
+  label: Kubernetes Cluster Autoscaler Enabled (Experimental)
+  description: "Enabling this setting will notify Longhorn that the cluster is using Kubernetes Cluster Autoscaler.
+  Longhorn prevents data loss by only allowing the Cluster Autoscaler to scale down a node that met all conditions:
+    - No volume attached to the node.
+    - Is not the last node containing the replica of any volume.
+    - Is not running backing image components pod.
+    - Is not running share manager components pod."
+  group: "Longhorn Default Settings"
+  type: boolean
+  default: false
+- variable: defaultSettings.orphanAutoDeletion
+  label: Orphaned Data Cleanup
+  description: "This setting allows Longhorn to delete the orphan resource and its corresponding orphaned data automatically like stale replicas. Orphan resources on down or unknown nodes will not be cleaned up automatically."
+  group: "Longhorn Default Settings"
+  type: boolean
+  default: false
+- variable: defaultSettings.storageNetwork
+  label: Storage Network
+  description: "Longhorn uses the storage network for in-cluster data traffic. Leave this blank to use the Kubernetes cluster network.
+	To segregate the storage network, input the pre-existing NetworkAttachmentDefinition in \"<namespace>/<name>\" format.
+	WARNING:
+	  - The cluster must have pre-existing Multus installed, and NetworkAttachmentDefinition IPs are reachable between nodes.
+	  - DO NOT CHANGE THIS SETTING WITH ATTACHED VOLUMES. Longhorn will try to block this setting update when there are attached volumes.
+	  - When applying the setting, Longhorn will restart all manager, instance-manager, and backing-image-manager pods."
+  group: "Longhorn Default Settings"
+  type: string
+  default:
 - variable: persistence.defaultClass
   default: "true"
   description: "Set as default StorageClass for Longhorn"
@@ -516,6 +550,15 @@ WARNING:
   min: 1
   max: 10
   default: 3
+- variable: persistence.defaultDataLocality
+  description: "Set data locality for Longhorn StorageClass"
+  label: Default Storage Class Data Locality
+  group: "Longhorn Storage Class Settings"
+  type: enum
+  options:
+  - "disabled"
+  - "best-effort"
+  default: "disabled"
 - variable: persistence.recurringJobSelector.enable
   description: "Enable recurring job selector for Longhorn StorageClass"
   group: "Longhorn Storage Class Settings"
@@ -593,6 +636,12 @@ WARNING:
     type: hostname
     required: true
     label: Layer 7 Load Balancer Hostname
+  - variable: ingress.path
+    default: "/"
+    description: "If ingress is enabled you can set the default ingress path"
+    type: string
+    required: true
+    label: Ingress Path
 - variable: service.ui.type
   default: "Rancher-Proxy"
   description: "Define Longhorn UI service type"

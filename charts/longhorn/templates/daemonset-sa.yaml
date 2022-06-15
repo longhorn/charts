@@ -18,10 +18,14 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
+      initContainers:
+      - name: wait-longhorn-admission-webhook
+        image: {{ template "registry_url" . }}{{ .Values.image.longhorn.manager.repository }}:{{ .Values.image.longhorn.manager.tag }}
+        command: ['sh', '-c', 'while [ $(curl -m 1 -s -o /dev/null -w "%{http_code}" -k https://longhorn-admission-webhook:9443/v1/healthz) != "200" ]; do echo waiting; sleep 2; done']
       containers:
       - name: longhorn-manager
         image: {{ template "registry_url" . }}{{ .Values.image.longhorn.manager.repository }}:{{ .Values.image.longhorn.manager.tag }}
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         securityContext:
           privileged: true
         command:
@@ -54,8 +58,8 @@ spec:
         - name: longhorn
           mountPath: /var/lib/longhorn/
           mountPropagation: Bidirectional
-        - name: longhorn-default-setting
-          mountPath: /var/lib/longhorn-setting/
+        - name: longhorn-grpc-tls
+          mountPath: /tls-files/
         env:
         - name: POD_NAMESPACE
           valueFrom:
@@ -69,8 +73,6 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        - name: DEFAULT_SETTING_PATH
-          value: /var/lib/longhorn-setting/default-setting.yaml
       volumes:
       - name: dev
         hostPath:
@@ -81,9 +83,10 @@ spec:
       - name: longhorn
         hostPath:
           path: /var/lib/longhorn/
-      - name: longhorn-default-setting
-        configMap:
-          name: longhorn-default-setting
+      - name: longhorn-grpc-tls
+        secret:
+          secretName: longhorn-grpc-tls
+          optional: true
       {{- if .Values.privateRegistry.registrySecret }}
       imagePullSecrets:
       - name: {{ .Values.privateRegistry.registrySecret }}
