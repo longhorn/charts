@@ -53,7 +53,7 @@ questions:
     label: Longhorn Instance Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.instanceManager.tag
-    default: v1_20220611
+    default: v1_20220722
     description: "Specify Longhorn Instance Manager Image Tag"
     type: string
     label: Longhorn Instance Manager Image Tag
@@ -668,5 +668,11 @@ WARNING:
   default: "true"
   description: "Setup a pod security policy for Longhorn workloads."
   label: Pod Security Policy
+  type: boolean
+  group: "Other Settings"
+- variable: global.cattle.windowsCluster.enabled
+  default: "false"
+  description: "Enable this to allow Longhorn to run on the Rancher deployed Windows cluster."
+  label: Rancher Windows Cluster
   type: boolean
   group: "Other Settings"
