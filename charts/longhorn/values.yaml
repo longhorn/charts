@@ -4,18 +4,34 @@
 global:
   cattle:
     systemDefaultRegistry: ""
+    windowsCluster:
+      # Enable this to allow Longhorn to run on the Rancher deployed Windows cluster
+      enabled: false
+      # Tolerate Linux node taint
+      tolerations:
+      - key: "cattle.io/os"
+        value: "linux"
+        effect: "NoSchedule"
+        operator: "Equal"
+      # Select Linux nodes
+      nodeSelector:
+        kubernetes.io/os: "linux"
+      # Recognize toleration and node selector for Longhorn run-time created components
+      defaultSetting:
+        taintToleration: cattle.io/os=linux:NoSchedule
+        systemManagedComponentsNodeSelector: kubernetes.io/os:linux
 
 image:
   longhorn:
     engine:
       repository: longhornio/longhorn-engine
-      tag: v1.2.4
+      tag: v1.2.5-rc1
     manager:
       repository: longhornio/longhorn-manager
-      tag: v1.2.4
+      tag: v1.2.5-rc1
     ui:
       repository: longhornio/longhorn-ui
-      tag: v1.2.4
+      tag: v1.2.5-rc1
     instanceManager:
       repository: longhornio/longhorn-instance-manager
       tag: v1_20220303
@@ -56,6 +72,7 @@ persistence:
   defaultFsType: ext4
   defaultClassReplicaCount: 3
   reclaimPolicy: Delete
+  migratable: false
   recurringJobSelector:
     enable: false
     jobList: []
@@ -226,3 +243,7 @@ namespaceOverride: ""
 
 # Annotations to add to the Longhorn Manager DaemonSet Pods. Optional.
 annotations: {}
+
+serviceAccount:
+  # Annotations to add to the service account
+  annotations: {}
