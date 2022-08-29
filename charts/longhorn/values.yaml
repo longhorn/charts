@@ -25,22 +25,22 @@ image:
   longhorn:
     engine:
       repository: longhornio/longhorn-engine
-      tag: v1.2.5-rc1
+      tag: v1.2.5-rc2
     manager:
       repository: longhornio/longhorn-manager
-      tag: v1.2.5-rc1
+      tag: v1.2.5-rc2
     ui:
       repository: longhornio/longhorn-ui
-      tag: v1.2.5-rc1
+      tag: v1.2.5-rc2
     instanceManager:
       repository: longhornio/longhorn-instance-manager
-      tag: v1_20220303
+      tag: v1_20220303_patch1
     shareManager:
       repository: longhornio/longhorn-share-manager
-      tag: v1_20211020
+      tag: v1_20211020_patch1
     backingImageManager:
       repository: longhornio/backing-image-manager
-      tag: v2_20210820
+      tag: v2_20210820_patch1
   csi:
     attacher:
       repository: longhornio/csi-attacher
@@ -105,6 +105,7 @@ defaultSettings:
   defaultReplicaCount: ~
   defaultLonghornStaticStorageClass: ~
   backupstorePollInterval: ~
+  failedBackupTTL: ~
   taintToleration: ~
   systemManagedComponentsNodeSelector: ~
   priorityClass: ~
