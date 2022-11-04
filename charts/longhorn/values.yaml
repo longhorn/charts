@@ -77,6 +77,10 @@ csi:
   resizerReplicaCount: ~
   snapshotterReplicaCount: ~
 
+webhook:
+  conversionReplicaCount: 2
+  admissionReplicaCount: 2
+
 defaultSettings:
   backupTarget: ~
   backupTargetCredentialSecret: ~

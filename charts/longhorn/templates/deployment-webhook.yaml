@@ -6,7 +6,7 @@ metadata:
   name: longhorn-conversion-webhook
   namespace: {{ include "release_namespace" . }}
 spec:
-  replicas: 2
+  replicas: {{ .Values.webhook.conversionReplicaCount }}
   selector:
     matchLabels:
       app: longhorn-conversion-webhook
@@ -74,7 +74,7 @@ metadata:
   name: longhorn-admission-webhook
   namespace: {{ include "release_namespace" . }}
 spec:
-  replicas: 2
+  replicas: {{ .Values.webhook.admissionReplicaCount }}
   selector:
     matchLabels:
       app: longhorn-admission-webhook
