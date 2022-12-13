@@ -31,6 +31,9 @@ spec:
         command:
         - longhorn-manager
         - -d
+        {{- if eq .Values.longhornManager.log.format "json" }}
+        - -j
+        {{- end }}
         - daemon
         - --engine-image
         - "{{ template "registry_url" . }}{{ .Values.image.longhorn.engine.repository }}:{{ .Values.image.longhorn.engine.tag }}"
@@ -40,6 +43,8 @@ spec:
         - "{{ template "registry_url" . }}{{ .Values.image.longhorn.shareManager.repository }}:{{ .Values.image.longhorn.shareManager.tag }}"
         - --backing-image-manager-image
         - "{{ template "registry_url" . }}{{ .Values.image.longhorn.backingImageManager.repository }}:{{ .Values.image.longhorn.backingImageManager.tag }}"
+        - --support-bundle-manager-image
+        - "{{ template "registry_url" . }}{{ .Values.image.longhorn.supportBundleKit.repository }}:{{ .Values.image.longhorn.supportBundleKit.tag }}"
         - --manager-image
         - "{{ template "registry_url" . }}{{ .Values.image.longhorn.manager.repository }}:{{ .Values.image.longhorn.manager.tag }}"
         - --service-account
@@ -92,15 +97,25 @@ spec:
       - name: {{ .Values.privateRegistry.registrySecret }}
       {{- end }}
       {{- if .Values.longhornManager.priorityClass }}
-      priorityClassName: {{ .Values.longhornManager.priorityClass | quote}}
+      priorityClassName: {{ .Values.longhornManager.priorityClass | quote }}
       {{- end }}
-      {{- if .Values.longhornManager.tolerations }}
+      {{- if or .Values.longhornManager.tolerations .Values.global.cattle.windowsCluster.enabled }}
       tolerations:
+        {{- if and .Values.global.cattle.windowsCluster.enabled .Values.global.cattle.windowsCluster.tolerations }}
+{{ toYaml .Values.global.cattle.windowsCluster.tolerations | indent 6 }}
+        {{- end }}
+        {{- if .Values.longhornManager.tolerations }}
 {{ toYaml .Values.longhornManager.tolerations | indent 6 }}
+        {{- end }}
       {{- end }}
-      {{- if .Values.longhornManager.nodeSelector }}
+      {{- if or .Values.longhornManager.nodeSelector .Values.global.cattle.windowsCluster.enabled }}
       nodeSelector:
+        {{- if and .Values.global.cattle.windowsCluster.enabled .Values.global.cattle.windowsCluster.nodeSelector }}
+{{ toYaml .Values.global.cattle.windowsCluster.nodeSelector | indent 8 }}
+        {{- end }}
+        {{- if .Values.longhornManager.nodeSelector }}
 {{ toYaml .Values.longhornManager.nodeSelector | indent 8 }}
+        {{- end }}
       {{- end }}
       serviceAccountName: longhorn-service-account
   updateStrategy:
@@ -114,6 +129,10 @@ metadata:
     app: longhorn-manager
   name: longhorn-backend
   namespace: {{ include "release_namespace" . }}
+  {{- if .Values.longhornManager.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.longhornManager.serviceAnnotations | indent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.service.manager.type }}
   sessionAffinity: ClientIP
