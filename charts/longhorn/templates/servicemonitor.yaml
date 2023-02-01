@@ -16,3 +16,4 @@ spec:
     - {{ include "release_namespace" . }}
   endpoints:
   - port: manager
+{{- end }}
