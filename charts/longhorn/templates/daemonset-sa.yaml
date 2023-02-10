@@ -30,7 +30,9 @@ spec:
           privileged: true
         command:
         - longhorn-manager
+        {{- if eq .Values.longhornManager.log.level "debug" }}
         - -d
+        {{- end }}
         {{- if eq .Values.longhornManager.log.format "json" }}
         - -j
         {{- end }}
