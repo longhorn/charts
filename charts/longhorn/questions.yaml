@@ -694,6 +694,17 @@ Set the value to **0** to disable backup restore."
   - "disabled"
   - "best-effort"
   default: "disabled"
+- variable: persistence.defaultReplicaAutoBalance
+  description: "Set replica auto balance for Longhorn StorageClass"
+  label: Default Storage Class Replica Auto Balance
+  group: "Longhorn Storage Class Settings"
+  type: enum
+  options:
+  - "ignored"
+  - "disabled"
+  - "least-effort"
+  - "best-effort"
+  default: "ignored"
 - variable: persistence.recurringJobSelector.enable
   description: "Enable recurring job selector for Longhorn StorageClass"
   group: "Longhorn Storage Class Settings"
