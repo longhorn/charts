@@ -838,10 +838,12 @@ Set the value to **0** to disable backup restore."
 - variable: networkPolicies.enabled
   description: "Enable NetworkPolicies to limit access to the longhorn pods."
   group: "Other Settings"
-  label: Longhorn UI Service
+  label: Network Policies
   default: "false"
+  type: boolean
   subquestions:
   - variable: networkPolicies.type
+    label: Network Policies for Ingress
     description: "Create the policy to allow access by an ingress"
     show_if: "ingress.enabled=true"
     type: enum
