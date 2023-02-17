@@ -1,4 +1,4 @@
-{{- if and .Values.networkPolicies.enabled .Values.ingress.enabled (not eq .Values.networkPolicies.type "") }}
+{{- if and .Values.networkPolicies.enabled .Values.ingress.enabled (not (eq .Values.networkPolicies.type "")) }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
