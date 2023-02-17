@@ -835,3 +835,18 @@ Set the value to **0** to disable backup restore."
   label: Rancher Windows Cluster
   type: boolean
   group: "Other Settings"
+- variable: networkPolicies.enabled
+  description: "Enable NetworkPolicies to limit access to the longhorn pods."
+  group: "Other Settings"
+  label: Longhorn UI Service
+  default: "false"
+  subquestions:
+  - variable: networkPolicies.type
+    description: "Create the policy to allow access by an ingress"
+    show_if: "ingress.enabled=true"
+    type: enum
+    default: "rke2"
+    options:
+      - "rke1"
+      - "rke2"
+      - "k3s"
