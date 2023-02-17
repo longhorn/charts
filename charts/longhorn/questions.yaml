@@ -845,7 +845,7 @@ Set the value to **0** to disable backup restore."
   - variable: networkPolicies.type
     label: Network Policies for Ingress
     description: "Create the policy to allow access by an ingress"
-    show_if: "ingress.enabled=true"
+    show_if: "networkPolicies.enabled=true&&ingress.enabled=true"
     type: enum
     default: "rke2"
     options:
