@@ -836,7 +836,8 @@ Set the value to **0** to disable backup restore."
   type: boolean
   group: "Other Settings"
 - variable: networkPolicies.enabled
-  description: "Enable NetworkPolicies to limit access to the longhorn pods."
+  description: "Enable NetworkPolicies to limit access to the longhorn pods.
+  Warning: The Rancher Proxy will not work if this feature is enabled and a custom NetworkPolicy must be added."
   group: "Other Settings"
   label: Network Policies
   default: "false"
