@@ -34,10 +34,10 @@ spec:
             service:
               name: longhorn-frontend
               port:
-                number: 80
+                name: http
             {{- else }}
             serviceName: longhorn-frontend
-            servicePort: 80
+            servicePort: http
             {{- end }}
 {{- if .Values.ingress.tls }}
   tls:
