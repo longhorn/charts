@@ -25,13 +25,13 @@ image:
   longhorn:
     engine:
       repository: longhornio/longhorn-engine
-      tag: v1.4.1
+      tag: v1.4.2-rc1
     manager:
       repository: longhornio/longhorn-manager
-      tag: v1.4.1
+      tag: v1.4.2-rc1
     ui:
       repository: longhornio/longhorn-ui
-      tag: v1.4.1
+      tag: v1.4.2-rc1
     instanceManager:
       repository: longhornio/longhorn-instance-manager
       tag: v1.4.1
@@ -43,7 +43,7 @@ image:
       tag: v1.4.1
     supportBundleKit:
       repository: longhornio/support-bundle-kit
-      tag: v0.0.19
+      tag: v0.0.24
   csi:
     attacher:
       repository: longhornio/csi-attacher
@@ -94,7 +94,7 @@ persistence:
     expectedChecksum: ~
   defaultNodeSelector:
     enable: false # disable by default
-    selector: []
+    selector: ""
   removeSnapshotsDuringFilesystemTrim: ignored # "enabled" or "disabled" otherwise
 
 csi:
@@ -133,6 +133,7 @@ defaultSettings:
   replicaZoneSoftAntiAffinity: ~
   nodeDownPodDeletionPolicy: ~
   allowNodeDrainWithLastHealthyReplica: ~
+  nodeDrainPolicy : ~
   mkfsExt4Parameters: ~
   disableReplicaRebuild: ~
   replicaReplenishmentWaitInterval: ~
