@@ -39,7 +39,6 @@ data:
       recurringJobSelector: '{{ .Values.persistence.recurringJobSelector.jobList }}'
       {{- end }}
       dataLocality: {{ .Values.persistence.defaultDataLocality | quote }}
-      replicaAutoBalance: {{ .Values.persistence.defaultReplicaAutoBalance | quote }}
       {{- if .Values.persistence.defaultNodeSelector.enable }}
       nodeSelector: "{{ .Values.persistence.defaultNodeSelector.selector }}"
       {{- end }}

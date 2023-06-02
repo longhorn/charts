@@ -17,7 +17,7 @@ questions:
     label: Longhorn Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.manager.tag
-    default: v1.4.0
+    default: v1.5.0-rc1
     description: "Specify Longhorn Manager Image Tag"
     type: string
     label: Longhorn Manager Image Tag
@@ -29,7 +29,7 @@ questions:
     label: Longhorn Engine Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.engine.tag
-    default: v1.4.0
+    default: v1.5.0-rc1
     description: "Specify Longhorn Engine Image Tag"
     type: string
     label: Longhorn Engine Image Tag
@@ -41,7 +41,7 @@ questions:
     label: Longhorn UI Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.ui.tag
-    default: v1.4.0
+    default: v1.5.0-rc1
     description: "Specify Longhorn UI Image Tag"
     type: string
     label: Longhorn UI Image Tag
@@ -53,7 +53,7 @@ questions:
     label: Longhorn Instance Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.instanceManager.tag
-    default: v1.4.0
+    default: v1.5.0-rc1
     description: "Specify Longhorn Instance Manager Image Tag"
     type: string
     label: Longhorn Instance Manager Image Tag
@@ -65,7 +65,7 @@ questions:
     label: Longhorn Share Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.shareManager.tag
-    default: v1.4.0
+    default: v1.5.0-rc1
     description: "Specify Longhorn Share Manager Image Tag"
     type: string
     label: Longhorn Share Manager Image Tag
@@ -77,7 +77,7 @@ questions:
     label: Longhorn Backing Image Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.backingImageManager.tag
-    default: v1.4.0
+    default: v1.5.0-rc1
     description: "Specify Longhorn Backing Image Manager Image Tag"
     type: string
     label: Longhorn Backing Image Manager Image Tag
@@ -89,7 +89,7 @@ questions:
     label: Longhorn Support Bundle Kit Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.supportBundleKit.tag
-    default: v0.0.17
+    default: v0.0.24
     description: "Specify Longhorn Support Bundle Manager Image Tag"
     type: string
     label: Longhorn Support Bundle Kit Image Tag
@@ -101,7 +101,7 @@ questions:
     label: Longhorn CSI Attacher Image Repository
     group: "Longhorn CSI Driver Images"
   - variable: image.csi.attacher.tag
-    default: v3.4.0
+    default: v4.2.0
     description: "Specify CSI attacher image tag. Leave blank to autodetect."
     type: string
     label: Longhorn CSI Attacher Image Tag
@@ -113,7 +113,7 @@ questions:
     label: Longhorn CSI Provisioner Image Repository
     group: "Longhorn CSI Driver Images"
   - variable: image.csi.provisioner.tag
-    default: v2.1.2
+    default: v3.4.1
     description: "Specify CSI provisioner image tag. Leave blank to autodetect."
     type: string
     label: Longhorn CSI Provisioner Image Tag
@@ -125,7 +125,7 @@ questions:
     label: Longhorn CSI Node Driver Registrar Image Repository
     group: "Longhorn CSI Driver Images"
   - variable: image.csi.nodeDriverRegistrar.tag
-    default: v2.5.0
+    default: v2.7.0
     description: "Specify CSI Node Driver Registrar image tag. Leave blank to autodetect."
     type: string
     label: Longhorn CSI Node Driver Registrar Image Tag
@@ -137,7 +137,7 @@ questions:
     label: Longhorn CSI Driver Resizer Image Repository
     group: "Longhorn CSI Driver Images"
   - variable: image.csi.resizer.tag
-    default: v1.3.0
+    default: v1.7.0
     description: "Specify CSI Driver Resizer image tag. Leave blank to autodetect."
     type: string
     label: Longhorn CSI Driver Resizer Image Tag
@@ -149,7 +149,7 @@ questions:
     label: Longhorn CSI Driver Snapshotter Image Repository
     group: "Longhorn CSI Driver Images"
   - variable: image.csi.snapshotter.tag
-    default: v5.0.1
+    default: v6.2.1
     description: "Specify CSI Driver Snapshotter image tag. Leave blank to autodetect."
     type: string
     label: Longhorn CSI Driver Snapshotter Image Tag
@@ -161,7 +161,7 @@ questions:
     label: Longhorn CSI Liveness Probe Image Repository
     group: "Longhorn CSI Driver Images"
   - variable: image.csi.livenessProbe.tag
-    default: v2.8.0
+    default: v2.9.0
     description: "Specify CSI liveness probe image tag. Leave blank to autodetect."
     type: string
     label: Longhorn CSI Liveness Probe Image Tag
@@ -439,24 +439,19 @@ If disabled, Longhorn will not delete the workload pod that is managed by a cont
     - "delete-deployment-pod"
     - "delete-both-statefulset-and-deployment-pod"
     default: "do-nothing"
-  - variable: defaultSettings.allowNodeDrainWithLastHealthyReplica
-    label: Allow Node Drain with the Last Healthy Replica
-    description: "By default, Longhorn will block `kubectl drain` action on a node if the node contains the last healthy replica of a volume.
-If this setting is enabled, Longhorn will **not** block `kubectl drain` action on a node even if the node contains the last healthy replica of a volume."
+  - variable: defaultSettings.nodeDrainPolicy
+    label: Node Drain Policy
+    description: "Define the policy to use when a node with the last healthy replica of a volume is drained.
+- **block-if-contains-last-replica** Longhorn will block the drain when the node contains the last healthy replica of a volume.
+- **allow-if-replica-is-stopped** Longhorn will allow the drain when the node contains the last healthy replica of a volume but the replica is stopped. WARNING: possible data loss if the node is removed after draining. Select this option if you want to drain the node and do in-place upgrade/maintenance.
+- **always-allow** Longhorn will allow the drain even though the node contains the last healthy replica of a volume. WARNING: possible data loss if the node is removed after draining. Also possible data corruption if the last replica was running during the draining."
     group: "Longhorn Default Settings"
-    type: boolean
-    default: "false"
-  - variable: defaultSettings.mkfsExt4Parameters
-    label: Custom mkfs.ext4 parameters
-    description: "Allows setting additional filesystem creation parameters for ext4. For older host kernels it might be necessary to disable the optional ext4 metadata_csum feature by specifying `-O ^64bit,^metadata_csum`."
-    group: "Longhorn Default Settings"
-    type: string
-  - variable: defaultSettings.disableReplicaRebuild
-    label: Disable Replica Rebuild
-    description: "This setting disable replica rebuild cross the whole cluster, eviction and data locality feature won't work if this setting is true. But doesn't have any impact to any current replica rebuild and restore disaster recovery volume."
-    group: "Longhorn Default Settings"
-    type: boolean
-    default: "false"
+    type: enum
+    options:
+      - "block-if-contains-last-replica"
+      - "allow-if-replica-is-stopped"
+      - "always-allow"
+    default: "block-if-contains-last-replica"
   - variable: defaultSettings.replicaReplenishmentWaitInterval
     label: Replica Replenishment Wait Interval
     description: "In seconds. The interval determines how long Longhorn will wait at least in order to reuse the existing data on a failed replica rather than directly creating a new replica for a degraded volume.
@@ -574,6 +569,12 @@ Set the value to **0** to disable backup restore."
     min: 0
     max: 40
     default: 12
+  - variable: defaultSettings.logLevel
+    label: Log Level
+    description: "The log level Panic, Fatal, Error, Warn, Info, Debug, Trace used in longhorn manager. By default Debug."
+    group: "Longhorn Default Settings"
+    type: string
+    default: "Debug"
 - variable: defaultSettings.kubernetesClusterAutoscalerEnabled
   label: Kubernetes Cluster Autoscaler Enabled (Experimental)
   description: "Enabling this setting will notify Longhorn that the cluster is using Kubernetes Cluster Autoscaler.
@@ -660,6 +661,40 @@ Set the value to **0** to disable backup restore."
   group: "Longhorn Default Settings"
   type: int
   default: "30"
+- variable: defaultSettings.backupCompressionMethod
+  label: Backup Compression Method
+  description: "This setting allows users to specify backup compression method.
+  Available options are
+    - **none**: Disable the compression method. Suitable for multimedia data such as encoded images and videos.
+    - **lz4**: Fast compression method. Suitable for flat files.
+    - **gzip**: A bit of higher compression ratio but relatively slow."
+  group: "Longhorn Default Settings"
+  type: string
+  default: "lz4"
+- variable: defaultSettings.backupConcurrentLimit
+  label: Backup Concurrent Limit Per Backup
+  description: "This setting controls how many worker threads per backup concurrently."
+  group: "Longhorn Default Settings"
+  type: int
+  min: 1
+  default: 5
+- variable: defaultSettings.restoreConcurrentLimit
+  label: Restore Concurrent Limit Per Backup
+  description: "This setting controls how many worker threads per restore concurrently."
+  group: "Longhorn Default Settings"
+  type: int
+  min: 1
+  default: 5
+- variable: defaultSettings.spdk
+  label: Enable SPDK Data Engine (Preview Feature)
+  description: "This allows users to activate SPDK data engine. Currently, it is in the preview phase and should not be utilized in a production environment.
+	WARNING:
+	  - The cluster must have pre-existing Multus installed, and NetworkAttachmentDefinition IPs are reachable between nodes.
+	  - DO NOT CHANGE THIS SETTING WITH ATTACHED VOLUMES. Longhorn will try to block this setting update when there are attached volumes.
+	  - When applying the setting, Longhorn will restart all instance-manager pods."
+  group: "Longhorn SPDK Data Engine Settings"
+  type: boolean
+  default: false
 - variable: persistence.defaultClass
   default: "true"
   description: "Set as default StorageClass for Longhorn"
@@ -694,17 +729,6 @@ Set the value to **0** to disable backup restore."
   - "disabled"
   - "best-effort"
   default: "disabled"
-- variable: persistence.defaultReplicaAutoBalance
-  description: "Set replica auto balance for Longhorn StorageClass"
-  label: Default Storage Class Replica Auto Balance
-  group: "Longhorn Storage Class Settings"
-  type: enum
-  options:
-  - "ignored"
-  - "disabled"
-  - "least-effort"
-  - "best-effort"
-  default: "ignored"
 - variable: persistence.recurringJobSelector.enable
   description: "Enable recurring job selector for Longhorn StorageClass"
   group: "Longhorn Storage Class Settings"
@@ -835,7 +859,7 @@ Set the value to **0** to disable backup restore."
     show_if: "service.ui.type=NodePort||service.ui.type=LoadBalancer"
     label: UI Service NodePort number
 - variable: enablePSP
-  default: "true"
+  default: "false"
   description: "Setup a pod security policy for Longhorn workloads."
   label: Pod Security Policy
   type: boolean
@@ -846,3 +870,21 @@ Set the value to **0** to disable backup restore."
   label: Rancher Windows Cluster
   type: boolean
   group: "Other Settings"
+- variable: networkPolicies.enabled
+  description: "Enable NetworkPolicies to limit access to the longhorn pods.
+  Warning: The Rancher Proxy will not work if this feature is enabled and a custom NetworkPolicy must be added."
+  group: "Other Settings"
+  label: Network Policies
+  default: "false"
+  type: boolean
+  subquestions:
+  - variable: networkPolicies.type
+    label: Network Policies for Ingress
+    description: "Create the policy to allow access for the ingress, select the distribution."
+    show_if: "networkPolicies.enabled=true&&ingress.enabled=true"
+    type: enum
+    default: "rke2"
+    options:
+      - "rke1"
+      - "rke2"
+      - "k3s"
