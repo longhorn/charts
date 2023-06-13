@@ -17,7 +17,7 @@ questions:
     label: Longhorn Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.manager.tag
-    default: v1.5.0-rc1
+    default: v1.5.0-rc2
     description: "Specify Longhorn Manager Image Tag"
     type: string
     label: Longhorn Manager Image Tag
@@ -29,7 +29,7 @@ questions:
     label: Longhorn Engine Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.engine.tag
-    default: v1.5.0-rc1
+    default: v1.5.0-rc2
     description: "Specify Longhorn Engine Image Tag"
     type: string
     label: Longhorn Engine Image Tag
@@ -41,7 +41,7 @@ questions:
     label: Longhorn UI Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.ui.tag
-    default: v1.5.0-rc1
+    default: v1.5.0-rc2
     description: "Specify Longhorn UI Image Tag"
     type: string
     label: Longhorn UI Image Tag
@@ -53,7 +53,7 @@ questions:
     label: Longhorn Instance Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.instanceManager.tag
-    default: v1.5.0-rc1
+    default: v1.5.0-rc2
     description: "Specify Longhorn Instance Manager Image Tag"
     type: string
     label: Longhorn Instance Manager Image Tag
@@ -65,7 +65,7 @@ questions:
     label: Longhorn Share Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.shareManager.tag
-    default: v1.5.0-rc1
+    default: v1.5.0-rc2
     description: "Specify Longhorn Share Manager Image Tag"
     type: string
     label: Longhorn Share Manager Image Tag
@@ -77,7 +77,7 @@ questions:
     label: Longhorn Backing Image Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.backingImageManager.tag
-    default: v1.5.0-rc1
+    default: v1.5.0-rc2
     description: "Specify Longhorn Backing Image Manager Image Tag"
     type: string
     label: Longhorn Backing Image Manager Image Tag
@@ -686,15 +686,25 @@ Set the value to **0** to disable backup restore."
   min: 1
   default: 5
 - variable: defaultSettings.spdk
-  label: Enable SPDK Data Engine (Preview Feature)
+  label: SPDK Data Engine
   description: "This allows users to activate SPDK data engine. Currently, it is in the preview phase and should not be utilized in a production environment.
 	WARNING:
 	  - The cluster must have pre-existing Multus installed, and NetworkAttachmentDefinition IPs are reachable between nodes.
 	  - DO NOT CHANGE THIS SETTING WITH ATTACHED VOLUMES. Longhorn will try to block this setting update when there are attached volumes.
 	  - When applying the setting, Longhorn will restart all instance-manager pods."
-  group: "Longhorn SPDK Data Engine Settings"
+  group: "Longhorn SPDK Data Engine (Preview Feature) Settings"
   type: boolean
   default: false
+- variable: persistence.offlineReplicaRebuilding
+  label: Offline Replica Rebuilding
+  description: ""This setting allows users to enable the offline replica rebuilding for volumes using SPDK data engine."
+  group: "Longhorn SPDK Data Engine (Preview Feature) Settings"
+  required: true
+  type: enum
+  options:
+  - "enabled"
+  - "disabled"
+  default: "enabled"
 - variable: persistence.defaultClass
   default: "true"
   description: "Set as default StorageClass for Longhorn"
