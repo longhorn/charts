@@ -1,4 +1,4 @@
-{{- if .Values.preHelmUpgradeCheckerJob.enabled }}
+{{- if .Values.helmPreUpgradeCheckerJob.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
