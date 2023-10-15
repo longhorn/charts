@@ -17,7 +17,7 @@ questions:
     label: Longhorn Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.manager.tag
-    default: v1.4.3
+    default: v1.4.4-rc1
     description: "Specify Longhorn Manager Image Tag"
     type: string
     label: Longhorn Manager Image Tag
@@ -29,7 +29,7 @@ questions:
     label: Longhorn Engine Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.engine.tag
-    default: v1.4.3
+    default: v1.4.4-rc1
     description: "Specify Longhorn Engine Image Tag"
     type: string
     label: Longhorn Engine Image Tag
@@ -41,7 +41,7 @@ questions:
     label: Longhorn UI Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.ui.tag
-    default: v1.4.3
+    default: v1.4.4-rc1
     description: "Specify Longhorn UI Image Tag"
     type: string
     label: Longhorn UI Image Tag
@@ -53,7 +53,7 @@ questions:
     label: Longhorn Instance Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.instanceManager.tag
-    default: v1.4.3
+    default: v1.4.4-rc1
     description: "Specify Longhorn Instance Manager Image Tag"
     type: string
     label: Longhorn Instance Manager Image Tag
@@ -65,7 +65,7 @@ questions:
     label: Longhorn Share Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.shareManager.tag
-    default: v1.4.3
+    default: v1.4.4-rc1
     description: "Specify Longhorn Share Manager Image Tag"
     type: string
     label: Longhorn Share Manager Image Tag
@@ -77,7 +77,7 @@ questions:
     label: Longhorn Backing Image Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.backingImageManager.tag
-    default: v1.4.3
+    default: v1.4.4-rc1
     description: "Specify Longhorn Backing Image Manager Image Tag"
     type: string
     label: Longhorn Backing Image Manager Image Tag
@@ -89,7 +89,7 @@ questions:
     label: Longhorn Support Bundle Kit Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.supportBundleKit.tag
-    default: v0.0.25
+    default: v0.0.27
     description: "Specify Longhorn Support Bundle Manager Image Tag"
     type: string
     label: Longhorn Support Bundle Kit Image Tag
@@ -721,18 +721,18 @@ Set the value to **0** to disable backup restore."
     group: "Longhorn Storage Class Settings"
     type: string
     default:
-- variable: defaultSettings.defaultNodeSelector.enable
-  description: "Enable recurring Node selector for Longhorn StorageClass"
+- variable: persistence.defaultNodeSelector.enable
+  description: "Enable Node selector for Longhorn StorageClass"
   group: "Longhorn Storage Class Settings"
   label: Enable Storage Class Node Selector
   type: boolean
   default: false
   show_subquestion_if: true
   subquestions:
-  - variable: defaultSettings.defaultNodeSelector.selector
+  - variable: persistence.defaultNodeSelector.selector
     label: Storage Class Node Selector
-    description: 'We use NodeSelector when we want to bind PVC via StorageClass into desired mountpoint on the nodes tagged whith its value'
-    group: "Longhorn Default Settings"
+    description: 'We use NodeSelector when we want to bind PVC via StorageClass into desired mountpoint on the nodes tagged with its value'
+    group: "Longhorn Storage Class Settings"
     type: string
     default:
 - variable: persistence.backingImage.enable
