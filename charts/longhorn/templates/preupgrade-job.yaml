@@ -1,4 +1,4 @@
-{{- if .Values.helmPreUpgradeCheckerJob.enabled }}
+{{- if and .Values.preUpgradeChecker.jobEnabled .Values.preUpgradeChecker.upgradeVersionCheck}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -32,9 +32,6 @@ spec:
       {{- if .Values.privateRegistry.registrySecret }}
       imagePullSecrets:
       - name: {{ .Values.privateRegistry.registrySecret }}
-      {{- end }}
-      {{- if .Values.longhornManager.priorityClass }}
-      priorityClassName: {{ .Values.longhornManager.priorityClass | quote }}
       {{- end }}
       serviceAccountName: longhorn-service-account
       {{- if or .Values.longhornManager.tolerations .Values.global.cattle.windowsCluster.enabled }}
