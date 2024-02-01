@@ -9,10 +9,14 @@ on:
 
 jobs:
   release:
-    runs-on: self-hosted
+    permissions:
+      contents: write
+
+    runs-on: ubuntu-latest
+
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         ref: "${{ github.event.inputs.branch }}"
 
@@ -20,10 +24,7 @@ jobs:
       run: git fetch --prune --unshallow
 
     - name: Install Helm
-      run: |
-        curl -fsSLo get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-        chmod 700 get_helm.sh
-        ./get_helm.sh
+      uses: azure/setup-helm@v3
 
     - name: Configure Git
       run: |
@@ -32,6 +33,6 @@ jobs:
         cat ./charts/longhorn/Chart.yaml
 
     - name: Run chart-releaser
-      uses: helm/chart-releaser-action@v1.0.0
+      uses: helm/chart-releaser-action@v1.6.0
       env:
         CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
