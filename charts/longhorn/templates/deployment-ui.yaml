@@ -89,6 +89,10 @@ metadata:
     {{- end }}
   name: longhorn-frontend
   namespace: {{ include "release_namespace" . }}
+  {{- if .Values.longhornManager.serviceAnnotations }}
+  annotations:
+{{ toYaml .Values.longhornManager.serviceAnnotations | indent 4 }}
+  {{- end }}
 spec:
   {{- if eq .Values.service.ui.type "Rancher-Proxy" }}
   type: ClusterIP
