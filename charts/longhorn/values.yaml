@@ -291,6 +291,11 @@ ingress:
   ## then you can access the UI by using the following full path {{host}}+{{path}}
   path: /
 
+  ## The pathType configures how the Ingress Controller implementation interprets the path
+  ## There are three supported path types, please see
+  ## ref: https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types
+  pathType: ImplementationSpecific
+
   ## Ingress annotations done as key:value pairs
   ## If you're using kube-lego, you will want to add:
   ## kubernetes.io/tls-acme: true
