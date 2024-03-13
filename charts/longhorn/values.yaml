@@ -35,37 +35,37 @@ image:
       # -- Repository for the Longhorn Engine image.
       repository: longhornio/longhorn-engine
       # -- Specify Longhorn engine image tag
-      tag: v1.6.0
+      tag: v1.6.1-rc1
     manager:
       # -- Repository for the Longhorn Manager image.
       repository: longhornio/longhorn-manager
       # -- Specify Longhorn manager image tag
-      tag: v1.6.0
+      tag: v1.6.1-rc1
     ui:
       # -- Repository for the Longhorn UI image.
       repository: longhornio/longhorn-ui
       # -- Specify Longhorn ui image tag
-      tag: v1.6.0
+      tag: v1.6.1-rc1
     instanceManager:
       # -- Repository for the Longhorn Instance Manager image.
       repository: longhornio/longhorn-instance-manager
       # -- Specify Longhorn instance manager image tag
-      tag: v1.6.0
+      tag: v1.6.1-rc1
     shareManager:
       # -- Repository for the Longhorn Share Manager image.
       repository: longhornio/longhorn-share-manager
       # -- Specify Longhorn share manager image tag
-      tag: v1.6.0
+      tag: v1.6.1-rc1
     backingImageManager:
       # -- Repository for the Backing Image Manager image. When unspecified, Longhorn uses the default value.
       repository: longhornio/backing-image-manager
       # -- Specify Longhorn backing image manager image tag
-      tag: v1.6.0
+      tag: v1.6.1-rc1
     supportBundleKit:
       # -- Repository for the Longhorn Support Bundle Manager image.
       repository: longhornio/support-bundle-kit
       # -- Tag for the Longhorn Support Bundle Manager image.
-      tag: v0.0.33
+      tag: v0.0.36
   csi:
     attacher:
       # -- Repository for the CSI attacher image. When unspecified, Longhorn uses the default value.
@@ -96,7 +96,7 @@ image:
       # -- Repository for the CSI liveness probe image. When unspecified, Longhorn uses the default value.
       repository: longhornio/livenessprobe
       # -- Tag for the CSI liveness probe image. When unspecified, Longhorn uses the default value.
-      tag: v2.11.0
+      tag: v2.12.0
   openshift:
     oauthProxy:
       # -- Repository for the OAuth Proxy image. This setting applies only to OpenShift users.
@@ -319,6 +319,8 @@ defaultSettings:
   allowCollectingLonghornUsageMetrics: ~
   # -- Setting that temporarily prevents all attempts to purge volume snapshots.
   disableSnapshotPurge: ~
+  # -- Maximum snapshot count for a volume. The value should be between 2 to 250
+  snapshotMaxCount: ~
 
 privateRegistry:
   # -- Setting that allows you to create a private registry secret.
