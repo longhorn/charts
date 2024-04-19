@@ -186,6 +186,8 @@ longhornManager:
   log:
     ## Allowed values are `plain` or `json`.
     format: plain
+    ## Enable debug log level
+    debug: true
   priorityClass: ~
   tolerations: []
   ## If you want to set tolerations for Longhorn Manager DaemonSet, delete the `[]` in the line above
