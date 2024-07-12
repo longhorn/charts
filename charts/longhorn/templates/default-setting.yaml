@@ -185,6 +185,9 @@ data:
     {{- if not (kindIs "invalid" .Values.defaultSettings.replicaFileSyncHttpClientTimeout) }}
     replica-file-sync-http-client-timeout: {{ .Values.defaultSettings.replicaFileSyncHttpClientTimeout }}
     {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.longGRPCTimeOut) }}
+    long-grpc-timeout: {{ .Values.defaultSettings.longGRPCTimeOut }}
+    {{- end }}
     {{- if not (kindIs "invalid" .Values.defaultSettings.logLevel) }}
     log-level: {{ .Values.defaultSettings.logLevel }}
     {{- end }}
@@ -226,4 +229,16 @@ data:
     {{- end }}
     {{- if not (kindIs "invalid" .Values.defaultSettings.snapshotMaxCount) }}
     snapshot-max-count: {{ .Values.defaultSettings.snapshotMaxCount }}
+    {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.v2DataEngineLogLevel) }}
+    v2-data-engine-log-level: {{ .Values.defaultSettings.v2DataEngineLogLevel }}
+    {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.v2DataEngineLogFlags) }}
+    v2-data-engine-log-flags: {{ .Values.defaultSettings.v2DataEngineLogFlags }}
+    {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.freezeFilesystemForSnapshot) }}
+    freeze-filesystem-for-snapshot: {{ .Values.defaultSettings.freezeFilesystemForSnapshot }}
+    {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.autoCleanupSnapshotWhenDeleteBackup) }}
+    auto-cleanup-when-delete-backup: {{ .Values.defaultSettings.autoCleanupSnapshotWhenDeleteBackup }}
     {{- end }}

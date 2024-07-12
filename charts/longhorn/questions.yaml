@@ -17,8 +17,8 @@ questions:
     label: Longhorn Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.manager.tag
-    default: v1.6.2
-    description: "Specify Longhorn Manager Image Tag"
+    default: v1.7.0-rc1
+    description: "Tag for the Longhorn Manager image."
     type: string
     label: Longhorn Manager Image Tag
     group: "Longhorn Images Settings"
@@ -29,8 +29,8 @@ questions:
     label: Longhorn Engine Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.engine.tag
-    default: v1.6.2
-    description: "Specify Longhorn Engine Image Tag"
+    default: v1.7.0-rc1
+    description: "Tag for the Longhorn Engine image."
     type: string
     label: Longhorn Engine Image Tag
     group: "Longhorn Images Settings"
@@ -41,8 +41,8 @@ questions:
     label: Longhorn UI Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.ui.tag
-    default: v1.6.2
-    description: "Specify Longhorn UI Image Tag"
+    default: v1.7.0-rc1
+    description: "Tag for the Longhorn UI image."
     type: string
     label: Longhorn UI Image Tag
     group: "Longhorn Images Settings"
@@ -53,8 +53,8 @@ questions:
     label: Longhorn Instance Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.instanceManager.tag
-    default: v1.6.2
-    description: "Specify Longhorn Instance Manager Image Tag"
+    default: v1.7.0-rc1
+    description: "Tag for the Longhorn Instance Manager image."
     type: string
     label: Longhorn Instance Manager Image Tag
     group: "Longhorn Images Settings"
@@ -65,8 +65,8 @@ questions:
     label: Longhorn Share Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.shareManager.tag
-    default: v1.6.2
-    description: "Specify Longhorn Share Manager Image Tag"
+    default: v1.7.0-rc1
+    description: "Tag for the Longhorn Share Manager image."
     type: string
     label: Longhorn Share Manager Image Tag
     group: "Longhorn Images Settings"
@@ -77,8 +77,8 @@ questions:
     label: Longhorn Backing Image Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.backingImageManager.tag
-    default: v1.6.2
-    description: "Specify Longhorn Backing Image Manager Image Tag"
+    default: v1.7.0-rc1
+    description: "Tag for the Backing Image Manager image. When unspecified, Longhorn uses the default value."
     type: string
     label: Longhorn Backing Image Manager Image Tag
     group: "Longhorn Images Settings"
@@ -89,7 +89,7 @@ questions:
     label: Longhorn Support Bundle Kit Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.supportBundleKit.tag
-    default: v0.0.37
+    default: v0.0.39
     description: "Tag for the Longhorn Support Bundle Manager image."
     type: string
     label: Longhorn Support Bundle Kit Image Tag
@@ -113,7 +113,7 @@ questions:
     label: Longhorn CSI Provisioner Image Repository
     group: "Longhorn CSI Driver Images"
   - variable: image.csi.provisioner.tag
-    default: v3.6.4
+    default: v4.0.1
     description: "Tag for the CSI Provisioner image. When unspecified, Longhorn uses the default value."
     type: string
     label: Longhorn CSI Provisioner Image Tag
@@ -149,7 +149,7 @@ questions:
     label: Longhorn CSI Driver Snapshotter Image Repository
     group: "Longhorn CSI Driver Images"
   - variable: image.csi.snapshotter.tag
-    default: v6.3.4
+    default: v7.0.2
     description: "Tag for the CSI Snapshotter image. When unspecified, Longhorn uses the default value."
     type: string
     label: Longhorn CSI Driver Snapshotter Image Tag
@@ -514,7 +514,7 @@ questions:
     description: "Setting that disables the revision counter and thereby prevents Longhorn from tracking all write operations to a volume. When salvaging a volume, Longhorn uses properties of the \"volume-head-xxx.img\" file (the last file size and the last time the file was modified) to select the replica to be used for volume recovery. This setting applies only to volumes created using the Longhorn UI."
     group: "Longhorn Default Settings"
     type: boolean
-    default: "false"
+    default: "true"
   - variable: defaultSettings.systemManagedPodsImagePullPolicy
     label: System Managed Pod Image Pull Policy
     description: "Image pull policy for system-managed pods, such as Instance Manager, engine images, and CSI Driver. Changes to the image pull policy are applied only after the system-managed pods restart."
@@ -590,6 +590,11 @@ questions:
     group: "Longhorn Default Settings"
     type: boolean
     default: "false"
+  - variable: defaultSettings.freezeFilesystemForSnapshot
+    description: "Setting that freezes the filesystem on the root partition before a snapshot is created."
+    group: "Longhorn Default Settings"
+    type: boolean
+    default: "false"
 - variable: defaultSettings.kubernetesClusterAutoscalerEnabled
   label: Kubernetes Cluster Autoscaler Enabled (Experimental)
   description: "Setting that notifies Longhorn that the cluster is using the Kubernetes Cluster Autoscaler.
@@ -660,6 +665,12 @@ questions:
   group: "Longhorn Default Settings"
   type: int
   default: "30"
+- variable: defaultSettings.longGRPCTimeOut
+  label: Long gRPC Timeout
+  description: "Number of seconds that Longhorn allows for the completion of replica rebuilding and snapshot cloning operations."
+  group: "Longhorn Default Settings"
+  type: int
+  default: "86400"
 - variable: defaultSettings.backupCompressionMethod
   label: Backup Compression Method
   description: "Setting that allows you to specify a backup compression method."
@@ -707,6 +718,25 @@ questions:
   group: "Longhorn V2 Data Engine (Preview Feature) Settings"
   type: int
   default: "2048"
+- variable: defaultSettings.v2DataEngineLogLevel
+  label: V2 Data Engine
+  description: "Setting that allows you to configure the log level of the SPDK target daemon (spdk_tgt) of the V2 Data Engine."
+  group: "Longhorn V2 Data Engine (Preview Feature) Settings"
+  type: enum
+  options:
+  - "Disabled"
+  - "Error"
+  - "Warn"
+  - "Notice"
+  - "Info"
+  - "Debug"
+  default: "Notice"
+- variable: defaultSettings.v2DataEngineLogFlags
+  label: V2 Data Engine
+  description: "Setting that allows you to configure the log flags of the SPDK target daemon (spdk_tgt) of the V2 Data Engine."
+  group: "Longhorn V2 Data Engine (Preview Feature) Settings"
+  type: string
+  default:
 - variable: defaultSettings.offlineReplicaRebuilding
   label: Offline Replica Rebuilding
   description: "Setting that allows rebuilding of offline replicas for volumes using the V2 Data Engine."
@@ -717,6 +747,12 @@ questions:
   - "enabled"
   - "disabled"
   default: "enabled"
+- variable: defaultSettings.autoCleanupSnapshotWhenDeleteBackup
+  label: Auto Cleanup Snapshot When Delete Backup
+  description: "Setting that automatically cleans up the snapshot when the backup is deleted."
+  group: "Longhorn Default Settings"
+  type: boolean
+  default: false
 - variable: persistence.defaultClass
   default: "true"
   description: "Setting that allows you to specify the default Longhorn StorageClass."
@@ -734,6 +770,16 @@ questions:
   - "Delete"
   - "Retain"
   default: "Delete"
+- variable: persistence.disableRevisionCounter
+  label: Default Storage Class Disable Revision Counter
+  description: "Setting that disables the revision counter and thereby prevents Longhorn from tracking all write operations to a volume. When salvaging a volume, Longhorn uses properties of the volume-head-xxx.img file (the last file size and the last time the file was modified) to select the replica to be used for volume recovery. (Options: \"true\", \"false\")"
+  group: "Longhorn Storage Class Settings"
+  required: true
+  type: enum
+  options:
+    - "true"
+    - "false"
+  default: "true"
 - variable: persistence.defaultClassReplicaCount
   description: "Replica count of the default Longhorn StorageClass."
   label: Default Storage Class Replica Count
@@ -765,6 +811,20 @@ questions:
     group: "Longhorn Storage Class Settings"
     type: string
     default:
+- variable: persistence.defaultDiskSelector.enable
+  description: "Setting that allows you to enable the disk selector for the default Longhorn StorageClass."
+  group: "Longhorn Storage Class Settings"
+  label: Enable Storage Class Disk Selector
+  type: boolean
+  default: false
+  show_subquestion_if: true
+  subquestions:
+    - variable: persistence.defaultDiskSelector.selector
+      label: Storage Class Disk Selector
+      description: 'Disk selector for the default Longhorn StorageClass. Longhorn uses only disks with the specified tags for storing volume data. (Examples: "nvme,sata")'
+      group: "Longhorn Storage Class Settings"
+      type: string
+      default:
 - variable: persistence.defaultNodeSelector.enable
   description: "Setting that allows you to enable the node selector for the default Longhorn StorageClass."
   group: "Longhorn Storage Class Settings"
@@ -855,6 +915,16 @@ questions:
     type: string
     required: true
     label: Ingress Path
+  - variable: ingress.pathType
+    default: "ImplementationSpecific"
+    description: "Path type for the ingress. (Options: \"ImplementationSpecific\", \"Exact\", \"Prefix\")"
+    type: enum
+    options:
+      - "ImplementationSpecific"
+      - "Exact"
+      - "Prefix"
+    required: true
+    label: Ingress Path Type
 - variable: service.ui.type
   default: "Rancher-Proxy"
   description: "Service type for Longhorn UI. (Options: \"ClusterIP\", \"NodePort\", \"LoadBalancer\", \"Rancher-Proxy\")"
@@ -911,7 +981,7 @@ questions:
     label: Guaranteed Instance Manager CPU for V2 Data Engine
     description: 'Number of millicpus on each node to be reserved for each Instance Manager pod when the V2 Data Engine is enabled. The default value is "1250".
     WARNING:
-    - Specifying a value of 0 disables CPU requests for instance manager pods. You must specify an integer between 1000 and 8000. 
+    - Specifying a value of 0 disables CPU requests for instance manager pods. You must specify an integer between 1000 and 8000.
     - This is a global setting. Modifying the value triggers an automatic restart of the instance manager pods. Do not modify the value while volumes are still attached."
     group: "Longhorn Default Settings'
     type: int

@@ -79,6 +79,8 @@ The `values.yaml` contains items used to tweak a deployment of this chart.
 | global.cattle.windowsCluster.enabled | bool | `false` | Setting that allows Longhorn to run on a Rancher Windows cluster. |
 | global.cattle.windowsCluster.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node selector for Linux nodes that can run user-deployed Longhorn components. |
 | global.cattle.windowsCluster.tolerations | list | `[{"effect":"NoSchedule","key":"cattle.io/os","operator":"Equal","value":"linux"}]` | Toleration for Linux nodes that can run user-deployed Longhorn components. |
+| global.nodeSelector | object | `{}` | Node selector for nodes allowed to run user-deployed components such as Longhorn Manager, Longhorn UI, and Longhorn Driver Deployer. |
+| global.tolerations | list | `[]` | Toleration for nodes allowed to run user-deployed components such as Longhorn Manager, Longhorn UI, and Longhorn Driver Deployer. |
 
 ### Network Policies
 
@@ -98,25 +100,25 @@ The `values.yaml` contains items used to tweak a deployment of this chart.
 | image.csi.nodeDriverRegistrar.repository | string | `"longhornio/csi-node-driver-registrar"` | Repository for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value. |
 | image.csi.nodeDriverRegistrar.tag | string | `"v2.9.2"` | Tag for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value. |
 | image.csi.provisioner.repository | string | `"longhornio/csi-provisioner"` | Repository for the CSI Provisioner image. When unspecified, Longhorn uses the default value. |
-| image.csi.provisioner.tag | string | `"v3.6.4"` | Tag for the CSI Provisioner image. When unspecified, Longhorn uses the default value. |
+| image.csi.provisioner.tag | string | `"v4.0.1"` | Tag for the CSI Provisioner image. When unspecified, Longhorn uses the default value. |
 | image.csi.resizer.repository | string | `"longhornio/csi-resizer"` | Repository for the CSI Resizer image. When unspecified, Longhorn uses the default value. |
 | image.csi.resizer.tag | string | `"v1.10.1"` | Tag for the CSI Resizer image. When unspecified, Longhorn uses the default value. |
 | image.csi.snapshotter.repository | string | `"longhornio/csi-snapshotter"` | Repository for the CSI Snapshotter image. When unspecified, Longhorn uses the default value. |
-| image.csi.snapshotter.tag | string | `"v6.3.4"` | Tag for the CSI Snapshotter image. When unspecified, Longhorn uses the default value. |
+| image.csi.snapshotter.tag | string | `"v7.0.2"` | Tag for the CSI Snapshotter image. When unspecified, Longhorn uses the default value. |
 | image.longhorn.backingImageManager.repository | string | `"longhornio/backing-image-manager"` | Repository for the Backing Image Manager image. When unspecified, Longhorn uses the default value. |
-| image.longhorn.backingImageManager.tag | string | `"v1.6.1"` | Specify Longhorn backing image manager image tag |
+| image.longhorn.backingImageManager.tag | string | `"master-head"` | Tag for the Backing Image Manager image. When unspecified, Longhorn uses the default value. |
 | image.longhorn.engine.repository | string | `"longhornio/longhorn-engine"` | Repository for the Longhorn Engine image. |
-| image.longhorn.engine.tag | string | `"v1.6.1"` | Specify Longhorn engine image tag |
+| image.longhorn.engine.tag | string | `"master-head"` | Tag for the Longhorn Engine image. |
 | image.longhorn.instanceManager.repository | string | `"longhornio/longhorn-instance-manager"` | Repository for the Longhorn Instance Manager image. |
-| image.longhorn.instanceManager.tag | string | `"v1.6.1"` | Specify Longhorn instance manager image tag |
+| image.longhorn.instanceManager.tag | string | `"master-head"` | Tag for the Longhorn Instance Manager image. |
 | image.longhorn.manager.repository | string | `"longhornio/longhorn-manager"` | Repository for the Longhorn Manager image. |
-| image.longhorn.manager.tag | string | `"v1.6.1"` | Specify Longhorn manager image tag |
+| image.longhorn.manager.tag | string | `"master-head"` | Tag for the Longhorn Manager image. |
 | image.longhorn.shareManager.repository | string | `"longhornio/longhorn-share-manager"` | Repository for the Longhorn Share Manager image. |
-| image.longhorn.shareManager.tag | string | `"v1.6.1"` | Specify Longhorn share manager image tag |
+| image.longhorn.shareManager.tag | string | `"master-head"` | Tag for the Longhorn Share Manager image. |
 | image.longhorn.supportBundleKit.repository | string | `"longhornio/support-bundle-kit"` | Repository for the Longhorn Support Bundle Manager image. |
-| image.longhorn.supportBundleKit.tag | string | `"v0.0.37"` | Tag for the Longhorn Support Bundle Manager image. |
+| image.longhorn.supportBundleKit.tag | string | `"v0.0.39"` | Tag for the Longhorn Support Bundle Manager image. |
 | image.longhorn.ui.repository | string | `"longhornio/longhorn-ui"` | Repository for the Longhorn UI image. |
-| image.longhorn.ui.tag | string | `"v1.6.1"` | Specify Longhorn ui image tag |
+| image.longhorn.ui.tag | string | `"master-head"` | Tag for the Longhorn UI image. |
 | image.openshift.oauthProxy.repository | string | `"longhornio/openshift-origin-oauth-proxy"` | Repository for the OAuth Proxy image. This setting applies only to OpenShift users. |
 | image.openshift.oauthProxy.tag | float | `4.14` | Tag for the OAuth Proxy image. This setting applies only to OpenShift users. Specify OCP/OKD version 4.1 or later. The latest stable version is 4.14. |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy that applies to all user-deployed Longhorn components, such as Longhorn Manager, Longhorn driver, and Longhorn UI. |
@@ -142,10 +144,13 @@ The `values.yaml` contains items used to tweak a deployment of this chart.
 | persistence.defaultClass | bool | `true` | Setting that allows you to specify the default Longhorn StorageClass. |
 | persistence.defaultClassReplicaCount | int | `3` | Replica count of the default Longhorn StorageClass. |
 | persistence.defaultDataLocality | string | `"disabled"` | Data locality of the default Longhorn StorageClass. (Options: "disabled", "best-effort") |
+| persistence.defaultDiskSelector.enable | bool | `false` | Setting that allows you to enable the disk selector for the default Longhorn StorageClass. |
+| persistence.defaultDiskSelector.selector | string | `""` | Disk selector for the default Longhorn StorageClass. Longhorn uses only disks with the specified tags for storing volume data. (Examples: "nvme,sata") |
 | persistence.defaultFsType | string | `"ext4"` | Filesystem type of the default Longhorn StorageClass. |
 | persistence.defaultMkfsParams | string | `""` | mkfs parameters of the default Longhorn StorageClass. |
 | persistence.defaultNodeSelector.enable | bool | `false` | Setting that allows you to enable the node selector for the default Longhorn StorageClass. |
 | persistence.defaultNodeSelector.selector | string | `""` | Node selector for the default Longhorn StorageClass. Longhorn uses only nodes with the specified tags for storing volume data. (Examples: "storage,fast") |
+| persistence.disableRevisionCounter | string | `"true"` | Setting that disables the revision counter and thereby prevents Longhorn from tracking all write operations to a volume. When salvaging a volume, Longhorn uses properties of the volume-head-xxx.img file (the last file size and the last time the file was modified) to select the replica to be used for volume recovery. |
 | persistence.migratable | bool | `false` | Setting that allows you to enable live migration of a Longhorn volume from one node to another. |
 | persistence.nfsOptions | string | `""` | Set NFS mount options for Longhorn StorageClass for RWX volumes |
 | persistence.reclaimPolicy | string | `"Delete"` | Reclaim policy that provides instructions for handling of a volume after its claim is released. (Options: "Retain", "Delete") |
@@ -173,7 +178,7 @@ Longhorn consists of user-deployed components (for example, Longhorn Manager, Lo
 | longhornManager.nodeSelector | object | `{}` | Node selector for Longhorn Manager. Specify the nodes allowed to run Longhorn Manager. |
 | longhornManager.priorityClass | string | `"longhorn-critical"` | PriorityClass for Longhorn Manager. |
 | longhornManager.serviceAnnotations | object | `{}` | Annotation for the Longhorn Manager service. |
-| longhornManager.tolerations | list | `[]` | Toleration for Longhorn Manager on nodes allowed to run Longhorn Manager. |
+| longhornManager.tolerations | list | `[]` | Toleration for Longhorn Manager on nodes allowed to run Longhorn components. |
 
 ### Longhorn Driver Settings
 
@@ -205,6 +210,7 @@ Longhorn consists of user-deployed components (for example, Longhorn Manager, Lo
 | ingress.host | string | `"sslip.io"` | Hostname of the Layer 7 load balancer. |
 | ingress.ingressClassName | string | `nil` | IngressClass resource that contains ingress configuration, including the name of the Ingress controller. ingressClassName can replace the kubernetes.io/ingress.class annotation used in earlier Kubernetes releases. |
 | ingress.path | string | `"/"` | Default ingress path. You can access the Longhorn UI by following the full ingress path {{host}}+{{path}}. |
+| ingress.pathType | string | `"ImplementationSpecific"` | Ingress path type. To maintain backward compatibility, the default value is "ImplementationSpecific". |
 | ingress.secrets | string | `nil` | Secret that contains a TLS private key and certificate. Use secrets if you want to use your own certificates to secure ingresses. |
 | ingress.secureBackends | bool | `false` | Setting that allows you to enable secure connections to the Longhorn UI service via port 443. |
 | ingress.tls | bool | `false` | Setting that allows you to enable TLS on ingress records. |
@@ -242,7 +248,13 @@ For more details, see the [ocp-readme](https://github.com/longhorn/longhorn/blob
 | annotations | `{}` | Annotation for the Longhorn Manager DaemonSet pods. This setting is optional. |
 | enableGoCoverDir | `false` | Setting that allows Longhorn to generate code coverage profiles. |
 | enablePSP | `false` | Setting that allows you to enable pod security policies (PSPs) that allow privileged Longhorn pods to start. This setting applies only to clusters running Kubernetes 1.25 and earlier, and with the built-in Pod Security admission controller enabled. |
+| metrics.serviceMonitor.additionalLabels | `{}` | Setting that adds additional labels to the Prometheus ServiceMonitor. |
+| metrics.serviceMonitor.annotations | `{}` | Setting that adds annotations to the Prometheus ServiceMonitor. |
 | metrics.serviceMonitor.enabled | `false` | Setting that allows the creation of a Prometheus ServiceMonitor resource for Longhorn Manager components. |
+| metrics.serviceMonitor.interval | `""` | Interval at which Prometheus scrapes the metrics from the target. |
+| metrics.serviceMonitor.metricRelabelings | `[]` | Configures the relabeling rules to apply to the samples before ingestion. See Prometheus operator documentation for format. |
+| metrics.serviceMonitor.relabelings | `[]` | Configures the relabeling rules to apply the target’s metadata labels. See Prometheus operator documentation for format. |
+| metrics.serviceMonitor.scrapeTimeout | `""` | Timeout after which Prometheus considers the scrape to be failed. |
 | namespaceOverride | `""` | Specify override namespace, specifically this is useful for using longhorn as sub-chart and its release namespace is not the `longhorn-system`. |
 | preUpgradeChecker.jobEnabled | `true` | Setting that allows Longhorn to perform pre-upgrade checks. Disable this setting when installing Longhorn using Argo CD or other GitOps solutions. |
 | preUpgradeChecker.upgradeVersionCheck | `true` | Setting that allows Longhorn to perform upgrade version checks after starting the Longhorn Manager DaemonSet Pods. Disabling this setting also disables `preUpgradeChecker.jobEnabled`. Longhorn recommends keeping this setting enabled. |
@@ -259,6 +271,7 @@ During installation, you can either allow Longhorn to use the default system set
 | defaultSettings.allowRecurringJobWhileVolumeDetached | Setting that allows Longhorn to automatically attach a volume and create snapshots or backups when recurring jobs are run. |
 | defaultSettings.allowVolumeCreationWithDegradedAvailability | Setting that allows you to create and attach a volume without having all replicas scheduled at the time of creation. |
 | defaultSettings.autoCleanupRecurringJobBackupSnapshot | Setting that allows Longhorn to automatically clean up the snapshot generated by a recurring backup job. |
+| defaultSettings.autoCleanupSnapshotWhenDeleteBackup | Setting that automatically cleans up the snapshot when the backup is deleted. |
 | defaultSettings.autoCleanupSystemGeneratedSnapshot | Setting that allows Longhorn to automatically clean up the system-generated snapshot after replica rebuilding is completed. |
 | defaultSettings.autoDeletePodWhenVolumeDetachedUnexpectedly | Setting that allows Longhorn to automatically delete a workload pod that is managed by a controller (for example, daemonset) whenever a Longhorn volume is detached unexpectedly (for example, during Kubernetes upgrades). After deletion, the controller restarts the pod and then Kubernetes handles volume reattachment and remounting. |
 | defaultSettings.autoSalvage | Setting that allows Longhorn to automatically salvage volumes when all replicas become faulty (for example, when the network connection is interrupted). Longhorn determines which replicas are usable and then uses these replicas for the volume. This setting is enabled by default. |
@@ -285,9 +298,11 @@ During installation, you can either allow Longhorn to use the default system set
 | defaultSettings.engineReplicaTimeout | Timeout between the Longhorn Engine and replicas. Specify a value between "8" and "30" seconds. The default value is "8". |
 | defaultSettings.failedBackupTTL | Number of minutes that Longhorn keeps a failed backup resource. When the value is "0", automatic deletion is disabled. |
 | defaultSettings.fastReplicaRebuildEnabled | Setting that allows fast rebuilding of replicas using the checksum of snapshot disk files. Before enabling this setting, you must set the snapshot-data-integrity value to "enable" or "fast-check". |
+| defaultSettings.freezeFilesystemForSnapshot | Setting that freezes the filesystem on the root partition before a snapshot is created. |
 | defaultSettings.guaranteedInstanceManagerCPU | Percentage of the total allocatable CPU resources on each node to be reserved for each instance manager pod when the V1 Data Engine is enabled. The default value is "12". |
 | defaultSettings.kubernetesClusterAutoscalerEnabled | Setting that notifies Longhorn that the cluster is using the Kubernetes Cluster Autoscaler. |
 | defaultSettings.logLevel | Log levels that indicate the type and severity of logs in Longhorn Manager. The default value is "Info". (Options: "Panic", "Fatal", "Error", "Warn", "Info", "Debug", "Trace") |
+| defaultSettings.longGRPCTimeOut | Number of seconds that Longhorn allows for the completion of replica rebuilding and snapshot cloning operations. |
 | defaultSettings.nodeDownPodDeletionPolicy | Policy that defines the action Longhorn takes when a volume is stuck with a StatefulSet or Deployment pod on a node that failed. |
 | defaultSettings.nodeDrainPolicy | Policy that defines the action Longhorn takes when a node with the last healthy replica of a volume is drained. |
 | defaultSettings.offlineReplicaRebuilding | Setting that allows rebuilding of offline replicas for volumes using the V2 Data Engine. |
@@ -322,6 +337,8 @@ During installation, you can either allow Longhorn to use the default system set
 | defaultSettings.v2DataEngine | Setting that allows you to enable the V2 Data Engine, which is based on the Storage Performance Development Kit (SPDK). The V2 Data Engine is a preview feature and should not be used in production environments. |
 | defaultSettings.v2DataEngineGuaranteedInstanceManagerCPU | Number of millicpus on each node to be reserved for each Instance Manager pod when the V2 Data Engine is enabled. The default value is "1250". |
 | defaultSettings.v2DataEngineHugepageLimit | Setting that allows you to configure maximum huge page size (in MiB) for the V2 Data Engine. |
+| defaultSettings.v2DataEngineLogFlags | Setting that allows you to configure the log flags of the SPDK target daemon (spdk_tgt) of the V2 Data Engine. |
+| defaultSettings.v2DataEngineLogLevel | Setting that allows you to configure the log level of the SPDK target daemon (spdk_tgt) of the V2 Data Engine. |
 
 ---
 Please see [link](https://github.com/longhorn/longhorn) for more information.
