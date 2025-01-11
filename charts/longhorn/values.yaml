@@ -415,6 +415,8 @@ longhornUI:
   replicas: 2
   # -- PriorityClass for Longhorn UI.
   priorityClass: *defaultPriorityClassNameRef
+  # -- Requests and Limits for Longhorn UI.
+  resources: {}
   # -- Toleration for Longhorn UI on nodes allowed to run Longhorn components.
   tolerations: []
   ## If you want to set tolerations for Longhorn UI Deployment, delete the `[]` in the line above
