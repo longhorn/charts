@@ -395,6 +395,8 @@ longhornDriver:
     format: plain
   # -- PriorityClass for Longhorn Driver.
   priorityClass: *defaultPriorityClassNameRef
+  # -- Requests and Limits for Longhorn Driver.
+  resources: {}
   # -- Toleration for Longhorn Driver on nodes allowed to run Longhorn components.
   tolerations: []
   ## If you want to set tolerations for Longhorn Driver Deployer Deployment, delete the `[]` in the line above
