@@ -17,7 +17,7 @@ questions:
     label: Longhorn Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.manager.tag
-    default: v1.8.0-rc2
+    default: v1.8.0-rc3
     description: "Tag for the Longhorn Manager image."
     type: string
     label: Longhorn Manager Image Tag
@@ -29,7 +29,7 @@ questions:
     label: Longhorn Engine Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.engine.tag
-    default: v1.8.0-rc2
+    default: v1.8.0-rc3
     description: "Tag for the Longhorn Engine image."
     type: string
     label: Longhorn Engine Image Tag
@@ -41,7 +41,7 @@ questions:
     label: Longhorn UI Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.ui.tag
-    default: v1.8.0-rc2
+    default: v1.8.0-rc3
     description: "Tag for the Longhorn UI image."
     type: string
     label: Longhorn UI Image Tag
@@ -53,7 +53,7 @@ questions:
     label: Longhorn Instance Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.instanceManager.tag
-    default: v1.8.0-rc2
+    default: v1.8.0-rc3
     description: "Tag for the Longhorn Instance Manager image."
     type: string
     label: Longhorn Instance Manager Image Tag
@@ -65,7 +65,7 @@ questions:
     label: Longhorn Share Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.shareManager.tag
-    default: v1.8.0-rc2
+    default: v1.8.0-rc3
     description: "Tag for the Longhorn Share Manager image."
     type: string
     label: Longhorn Share Manager Image Tag
@@ -77,7 +77,7 @@ questions:
     label: Longhorn Backing Image Manager Image Repository
     group: "Longhorn Images Settings"
   - variable: image.longhorn.backingImageManager.tag
-    default: v1.8.0-rc2
+    default: v1.8.0-rc3
     description: "Tag for the Backing Image Manager image. When unspecified, Longhorn uses the default value."
     type: string
     label: Longhorn Backing Image Manager Image Tag
@@ -101,7 +101,7 @@ questions:
     label: Longhorn CSI Attacher Image Repository
     group: "Longhorn CSI Driver Images"
   - variable: image.csi.attacher.tag
-    default: v4.7.0-20241219
+    default: v4.8.0
     description: "Tag for the CSI attacher image. When unspecified, Longhorn uses the default value."
     type: string
     label: Longhorn CSI Attacher Image Tag
@@ -125,7 +125,7 @@ questions:
     label: Longhorn CSI Node Driver Registrar Image Repository
     group: "Longhorn CSI Driver Images"
   - variable: image.csi.nodeDriverRegistrar.tag
-    default: v2.12.0-20241219
+    default: v2.13.0
     description: "Tag for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value."
     type: string
     label: Longhorn CSI Node Driver Registrar Image Tag
@@ -161,7 +161,7 @@ questions:
     label: Longhorn CSI Liveness Probe Image Repository
     group: "Longhorn CSI Driver Images"
   - variable: image.csi.livenessProbe.tag
-    default: v2.14.0-20241219
+    default: v2.15.0
     description: "Tag for the CSI liveness probe image. When unspecified, Longhorn uses the default value."
     type: string
     label: Longhorn CSI Liveness Probe Image Tag
@@ -686,20 +686,20 @@ questions:
   default: true
 - variable: defaultSettings.v2DataEngine
   label: V2 Data Engine
-  description: "Setting that allows you to enable the V2 Data Engine, which is based on the Storage Performance Development Kit (SPDK). The V2 Data Engine is a preview feature and should not be used in production environments. **Caution**: [1] **Do not modify this setting while volumes are still attached.** [2] When the V2 Data Engine is enabled, each Instance Manager pod for the V2 Data Engine uses 1 CPU core. The high CPU usage is caused by `spdk_tgt`, a process running in each Instance Manager pod that handles input/output (IO) operations and requires intensive polling. `spdk_tgt` consumes 100% of a dedicated CPU core to efficiently manage and process the IO requests, ensuring optimal performance and responsiveness for storage operations."
-  group: "Longhorn V2 Data Engine (Preview Feature) Settings"
+  description: "Setting that allows you to enable the V2 Data Engine, which is based on the Storage Performance Development Kit (SPDK). The V2 Data Engine is an experimental feature and should not be used in production environments. **Caution**: [1] **Do not modify this setting while volumes are still attached.** [2] When the V2 Data Engine is enabled, each Instance Manager pod for the V2 Data Engine uses 1 CPU core. The high CPU usage is caused by `spdk_tgt`, a process running in each Instance Manager pod that handles input/output (IO) operations and requires intensive polling. `spdk_tgt` consumes 100% of a dedicated CPU core to efficiently manage and process the IO requests, ensuring optimal performance and responsiveness for storage operations."
+  group: "Longhorn V2 Data Engine (Experimental Feature) Settings"
   type: boolean
   default: false
 - variable: defaultSettings.v2DataEngineHugepageLimit
   label: V2 Data Engine
   description: "This allows users to configure maximum huge page size (in MiB) for the V2 Data Engine."
-  group: "Longhorn V2 Data Engine (Preview Feature) Settings"
+  group: "Longhorn V2 Data Engine (Experimental Feature) Settings"
   type: int
   default: "2048"
 - variable: defaultSettings.v2DataEngineLogLevel
   label: V2 Data Engine
   description: "Setting that allows you to configure the log level of the SPDK target daemon (spdk_tgt) of the V2 Data Engine."
-  group: "Longhorn V2 Data Engine (Preview Feature) Settings"
+  group: "Longhorn V2 Data Engine (Experimental Feature) Settings"
   type: enum
   options:
   - "Disabled"
@@ -712,7 +712,7 @@ questions:
 - variable: defaultSettings.v2DataEngineLogFlags
   label: V2 Data Engine
   description: "Setting that allows you to configure the log flags of the SPDK target daemon (spdk_tgt) of the V2 Data Engine."
-  group: "Longhorn V2 Data Engine (Preview Feature) Settings"
+  group: "Longhorn V2 Data Engine (Experimental Feature) Settings"
   type: string
   default:
 - variable: defaultSettings.autoCleanupSnapshotWhenDeleteBackup
