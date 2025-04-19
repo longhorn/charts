@@ -6,6 +6,8 @@ global:
   tolerations: []
   # -- Node selector for nodes allowed to run user-deployed components such as Longhorn Manager, Longhorn UI, and Longhorn Driver Deployer.
   nodeSelector: {}
+  # -- Resource requests and limits for user-deployed components such as Longhorn Manager, Longhorn UI, and Longhorn Driver Deployer.
+  resources: {}
   cattle:
     # -- Default system registry.
     systemDefaultRegistry: ""
@@ -107,6 +109,27 @@ image:
       tag: ""
   # -- Image pull policy that applies to all user-deployed Longhorn components, such as Longhorn Manager, Longhorn driver, and Longhorn UI.
   pullPolicy: IfNotPresent
+resources:
+  # -- Resource requests and limits for all user-deployed components, such as Longhorn Manager, Longhorn driver, and Longhorn UI.
+  # Example:
+  # requests:
+  #   cpu: "100m"
+  #   memory: "128Mi"
+  # limits:
+  #   cpu: "500m"
+  #   memory: "256Mi"
+  longhorn:
+    # -- Resource requests and limits for the Longhorn Manager component.
+    manager: {}
+    # -- Resource requests and limits for the Longhorn UI component.
+    ui: {}
+    # -- Resource requests and limits for the Longhorn Share Manager component.
+    shareManager: {}
+    # -- Resource requests and limits for the Longhorn Driver Deployer component.
+    driverDeployer: {}
+  openshift:
+    # -- Resource requests and limits for the OAuth Proxy component.
+    oauthProxy: {}
 service:
   ui:
     # -- Service type for Longhorn UI. (Options: "ClusterIP", "NodePort", "LoadBalancer", "Rancher-Proxy")

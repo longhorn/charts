@@ -19,6 +19,10 @@ spec:
       - name: longhorn-uninstall
         image: {{ template "registry_url" . }}{{ .Values.image.longhorn.manager.repository }}:{{ .Values.image.longhorn.manager.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
+        {{- with .Values.resources.longhorn.manager | default .Values.global.resources }}
+        resources:
+        {{- toYaml . | nindent 10 }}
+        {{- end }}
         command:
         - longhorn-manager
         - uninstall

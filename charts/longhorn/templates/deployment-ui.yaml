@@ -76,6 +76,10 @@ spec:
         image: ""
         {{- end }}
         imagePullPolicy: IfNotPresent
+        {{- with .Values.resources.openshift.oauthProxy | default .Values.global.resources }}
+        resources:
+        {{- toYaml . | nindent 10 }}
+        {{- end }}
         ports:
         - containerPort: {{ .Values.openshift.ui.proxy | default 8443 }}
           name: public
@@ -96,6 +100,10 @@ spec:
       - name: longhorn-ui
         image: {{ template "registry_url" . }}{{ .Values.image.longhorn.ui.repository }}:{{ .Values.image.longhorn.ui.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
+        {{- with .Values.resources.longhorn.ui | default .Values.global.resources }}
+        resources:
+        {{- toYaml . | nindent 10 }}
+        {{- end }}
         volumeMounts:
         - name : nginx-cache
           mountPath: /var/cache/nginx/

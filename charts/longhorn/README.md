@@ -81,6 +81,7 @@ The `values.yaml` contains items used to tweak a deployment of this chart.
 | global.cattle.windowsCluster.tolerations | list | `[{"effect":"NoSchedule","key":"cattle.io/os","operator":"Equal","value":"linux"}]` | Toleration for Linux nodes that can run user-deployed Longhorn components. |
 | global.nodeSelector | object | `{}` | Node selector for nodes allowed to run user-deployed components such as Longhorn Manager, Longhorn UI, and Longhorn Driver Deployer. |
 | global.tolerations | list | `[]` | Toleration for nodes allowed to run user-deployed components such as Longhorn Manager, Longhorn UI, and Longhorn Driver Deployer. |
+| global.resources | object | `{}` | Resource requests and limits for user-deployed components such as Longhorn Manager, Longhorn UI, and Longhorn Driver Deployer. |
 
 ### Network Policies
 
@@ -122,6 +123,16 @@ The `values.yaml` contains items used to tweak a deployment of this chart.
 | image.openshift.oauthProxy.repository | string | `""` | Repository for the OAuth Proxy image. Specify the upstream image (for example, "quay.io/openshift/origin-oauth-proxy"). This setting applies only to OpenShift users. |
 | image.openshift.oauthProxy.tag | string | `""` | Tag for the OAuth Proxy image. Specify OCP/OKD version 4.1 or later (including version 4.15, which is available at quay.io/openshift/origin-oauth-proxy:4.15). This setting applies only to OpenShift users. |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy that applies to all user-deployed Longhorn components, such as Longhorn Manager, Longhorn driver, and Longhorn UI. |
+
+### Resource settings
+
+| Key                               | Type   | Default | Description                                                            |
+|-----------------------------------|--------|---------|------------------------------------------------------------------------|
+| resources.longhorn.manager        | object | `{}`    | Resource requests and limits for the Longhorn Manager component.       |
+| resources.longhorn.ui             | object | `{}`    | Resource requests and limits for the Longhorn UI component.            |
+| resources.longhorn.shareManager   | object | `{}`    | Resource requests and limits for the Longhorn Share Manager component. |
+| resources.longhorn.driverDeployer | object | `{}`    | Resource requests and limits for the Longhorn Driver Deployer.         |
+| resources.openshift.oauthProxy    | object | `{}`    | Resource requests and limits for the OAuth Proxy component.            |
 
 ### Service Settings
 
