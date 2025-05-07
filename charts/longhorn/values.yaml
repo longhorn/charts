@@ -37,32 +37,32 @@ image:
       # -- Repository for the Longhorn Engine image.
       repository: longhornio/longhorn-engine
       # -- Tag for the Longhorn Engine image.
-      tag: v1.9.0-rc1
+      tag: v1.9.0-rc2
     manager:
       # -- Repository for the Longhorn Manager image.
       repository: longhornio/longhorn-manager
       # -- Tag for the Longhorn Manager image.
-      tag: v1.9.0-rc1
+      tag: v1.9.0-rc2
     ui:
       # -- Repository for the Longhorn UI image.
       repository: longhornio/longhorn-ui
       # -- Tag for the Longhorn UI image.
-      tag: v1.9.0-rc1
+      tag: v1.9.0-rc2
     instanceManager:
       # -- Repository for the Longhorn Instance Manager image.
       repository: longhornio/longhorn-instance-manager
       # -- Tag for the Longhorn Instance Manager image.
-      tag: v1.9.0-rc1
+      tag: v1.9.0-rc2
     shareManager:
       # -- Repository for the Longhorn Share Manager image.
       repository: longhornio/longhorn-share-manager
       # -- Tag for the Longhorn Share Manager image.
-      tag: v1.9.0-rc1
+      tag: v1.9.0-rc2
     backingImageManager:
       # -- Repository for the Backing Image Manager image. When unspecified, Longhorn uses the default value.
       repository: longhornio/backing-image-manager
       # -- Tag for the Backing Image Manager image. When unspecified, Longhorn uses the default value.
-      tag: v1.9.0-rc1
+      tag: v1.9.0-rc2
     supportBundleKit:
       # -- Repository for the Longhorn Support Bundle Manager image.
       repository: longhornio/support-bundle-kit
@@ -282,8 +282,9 @@ defaultSettings:
   guaranteedInstanceManagerCPU: ~
   # -- Setting that notifies Longhorn that the cluster is using the Kubernetes Cluster Autoscaler.
   kubernetesClusterAutoscalerEnabled: ~
-  # -- Setting that allows Longhorn to automatically delete an orphaned resource and the corresponding data (for example, stale replicas). Orphaned resources on failed or unknown nodes are not automatically cleaned up.
-  orphanAutoDeletion: ~
+  # -- Enables Longhorn to automatically delete orphaned resources and their associated data or processes (e.g., stale replicas). Orphaned resources on failed or unknown nodes are not automatically cleaned up. 
+  # You need to specify the resource types to be deleted using a semicolon-separated list (e.g., `replicaData;replicaInstance`). Available items are: `replicaData`, `engineInstance`, `replicaInstance`.
+  orphanResourceAutoDeletion: ~
   # -- Storage network for in-cluster traffic. When unspecified, Longhorn uses the Kubernetes cluster network.
   storageNetwork: ~
   # -- Flag that prevents accidental uninstallation of Longhorn.
@@ -531,3 +532,6 @@ openshift:
     proxy: 8443
 # -- Setting that allows Longhorn to generate code coverage profiles.
 enableGoCoverDir: false
+
+# -- Add extra objects manifests
+extraObjects: []

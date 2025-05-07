@@ -106,19 +106,19 @@ The `values.yaml` contains items used to tweak a deployment of this chart.
 | image.csi.snapshotter.repository | string | `"longhornio/csi-snapshotter"` | Repository for the CSI Snapshotter image. When unspecified, Longhorn uses the default value. |
 | image.csi.snapshotter.tag | string | `"v8.2.0"` | Tag for the CSI Snapshotter image. When unspecified, Longhorn uses the default value. |
 | image.longhorn.backingImageManager.repository | string | `"longhornio/backing-image-manager"` | Repository for the Backing Image Manager image. When unspecified, Longhorn uses the default value. |
-| image.longhorn.backingImageManager.tag | string | `"master-head"` | Tag for the Backing Image Manager image. When unspecified, Longhorn uses the default value. |
+| image.longhorn.backingImageManager.tag | string | `"v1.9.0-rc1"` | Tag for the Backing Image Manager image. When unspecified, Longhorn uses the default value. |
 | image.longhorn.engine.repository | string | `"longhornio/longhorn-engine"` | Repository for the Longhorn Engine image. |
-| image.longhorn.engine.tag | string | `"master-head"` | Tag for the Longhorn Engine image. |
+| image.longhorn.engine.tag | string | `"v1.9.0-rc1"` | Tag for the Longhorn Engine image. |
 | image.longhorn.instanceManager.repository | string | `"longhornio/longhorn-instance-manager"` | Repository for the Longhorn Instance Manager image. |
-| image.longhorn.instanceManager.tag | string | `"master-head"` | Tag for the Longhorn Instance Manager image. |
+| image.longhorn.instanceManager.tag | string | `"v1.9.0-rc1"` | Tag for the Longhorn Instance Manager image. |
 | image.longhorn.manager.repository | string | `"longhornio/longhorn-manager"` | Repository for the Longhorn Manager image. |
-| image.longhorn.manager.tag | string | `"master-head"` | Tag for the Longhorn Manager image. |
+| image.longhorn.manager.tag | string | `"v1.9.0-rc1"` | Tag for the Longhorn Manager image. |
 | image.longhorn.shareManager.repository | string | `"longhornio/longhorn-share-manager"` | Repository for the Longhorn Share Manager image. |
-| image.longhorn.shareManager.tag | string | `"master-head"` | Tag for the Longhorn Share Manager image. |
+| image.longhorn.shareManager.tag | string | `"v1.9.0-rc1"` | Tag for the Longhorn Share Manager image. |
 | image.longhorn.supportBundleKit.repository | string | `"longhornio/support-bundle-kit"` | Repository for the Longhorn Support Bundle Manager image. |
 | image.longhorn.supportBundleKit.tag | string | `"v0.0.54"` | Tag for the Longhorn Support Bundle Manager image. |
 | image.longhorn.ui.repository | string | `"longhornio/longhorn-ui"` | Repository for the Longhorn UI image. |
-| image.longhorn.ui.tag | string | `"master-head"` | Tag for the Longhorn UI image. |
+| image.longhorn.ui.tag | string | `"v1.9.0-rc1"` | Tag for the Longhorn UI image. |
 | image.openshift.oauthProxy.repository | string | `""` | Repository for the OAuth Proxy image. Specify the upstream image (for example, "quay.io/openshift/origin-oauth-proxy"). This setting applies only to OpenShift users. |
 | image.openshift.oauthProxy.tag | string | `""` | Tag for the OAuth Proxy image. Specify OCP/OKD version 4.1 or later (including version 4.15, which is available at quay.io/openshift/origin-oauth-proxy:4.15). This setting applies only to OpenShift users. |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy that applies to all user-deployed Longhorn components, such as Longhorn Manager, Longhorn driver, and Longhorn UI. |
@@ -269,6 +269,7 @@ For more details, see the [ocp-readme](https://github.com/longhorn/longhorn/blob
 | defaultBackupStore.pollInterval | `nil` | Number of seconds that Longhorn waits before checking the default backupstore for new backups. The default value is "300". When the value is "0", polling is disabled. |
 | enableGoCoverDir | `false` | Setting that allows Longhorn to generate code coverage profiles. |
 | enablePSP | `false` | Setting that allows you to enable pod security policies (PSPs) that allow privileged Longhorn pods to start. This setting applies only to clusters running Kubernetes 1.25 and earlier, and with the built-in Pod Security admission controller enabled. |
+| extraObjects | `[]` | Add extra objects manifests |
 | namespaceOverride | `""` | Specify override namespace, specifically this is useful for using longhorn as sub-chart and its release namespace is not the `longhorn-system`. |
 | preUpgradeChecker.jobEnabled | `true` | Setting that allows Longhorn to perform pre-upgrade checks. Disable this setting when installing Longhorn using Argo CD or other GitOps solutions. |
 | preUpgradeChecker.upgradeVersionCheck | `true` | Setting that allows Longhorn to perform upgrade version checks after starting the Longhorn Manager DaemonSet Pods. Disabling this setting also disables `preUpgradeChecker.jobEnabled`. Longhorn recommends keeping this setting enabled. |
@@ -319,7 +320,7 @@ During installation, you can either allow Longhorn to use the default system set
 | defaultSettings.nodeDownPodDeletionPolicy | Policy that defines the action Longhorn takes when a volume is stuck with a StatefulSet or Deployment pod on a node that failed. |
 | defaultSettings.nodeDrainPolicy | Policy that defines the action Longhorn takes when a node with the last healthy replica of a volume is drained. |
 | defaultSettings.offlineRelicaRebuilding | Enables automatic rebuilding of degraded replicas while the volume is detached. This setting only takes effect if the individual volume setting is set to `ignored` or `enabled`. |
-| defaultSettings.orphanAutoDeletion | Setting that allows Longhorn to automatically delete an orphaned resource and the corresponding data (for example, stale replicas). Orphaned resources on failed or unknown nodes are not automatically cleaned up. |
+| defaultSettings.orphanResourceAutoDeletion | Enables Longhorn to automatically delete orphaned resources and their associated data or processes (e.g., stale replicas). Orphaned resources on failed or unknown nodes are not automatically cleaned up.  You need to specify the resource types to be deleted using a semicolon-separated list (e.g., `replicaData;replicaInstance`). Available items are: `replicaData`, `engineInstance`, `replicaInstance`. |
 | defaultSettings.priorityClass | PriorityClass for system-managed Longhorn components. This setting can help prevent Longhorn components from being evicted under Node Pressure. Notice that this will be applied to Longhorn user-deployed components by default if there are no priority class values set yet, such as `longhornManager.priorityClass`. |
 | defaultSettings.recurringFailedJobsHistoryLimit | Maximum number of failed recurring backup and snapshot jobs to be retained. When the value is "0", a history of failed recurring jobs is not retained. |
 | defaultSettings.recurringJobMaxRetention | Maximum number of snapshots or backups to be retained. |
