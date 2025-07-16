@@ -61,7 +61,7 @@ spec:
       {{- if .Values.openshift.ui.route }}
       - name: oauth-proxy
         {{- if .Values.image.openshift.oauthProxy.repository }}
-        image: {{ template "registry_url" . }}{{ .Values.image.openshift.oauthProxy.repository }}:{{ .Values.image.openshift.oauthProxy.tag }}
+        image: {{ with (coalesce .Values.global.imageRegistry (include "registry_url" .) .Values.image.openshift.oauthProxy.registry) }}{{ . }}/{{ end }}{{ .Values.image.openshift.oauthProxy.repository }}:{{ .Values.image.openshift.oauthProxy.tag }}
         {{- else }}
         image: ""
         {{- end }}
@@ -84,7 +84,7 @@ spec:
       {{- end }}
       {{- end }}
       - name: longhorn-ui
-        image: {{ template "registry_url" . }}{{ .Values.image.longhorn.ui.repository }}:{{ .Values.image.longhorn.ui.tag }}
+        image: {{ with (coalesce .Values.global.imageRegistry (include "registry_url" .) .Values.image.longhorn.ui.registry) }}{{ . }}/{{ end }}{{ .Values.image.longhorn.ui.repository }}:{{ .Values.image.longhorn.ui.tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         volumeMounts:
         - name: nginx-cache
@@ -115,9 +115,21 @@ spec:
         name: nginx-config
       - emptyDir: {}
         name: var-run
-      {{- if .Values.privateRegistry.registrySecret }}
+      {{- with (coalesce .Values.global.imagePullSecrets .Values.privateRegistry.registrySecret) }}
       imagePullSecrets:
-      - name: {{ .Values.privateRegistry.registrySecret }}
+        {{- $imagePullSecrets := list }}
+        {{- if kindIs "string" . }}
+          {{- $imagePullSecrets = append $imagePullSecrets (dict "name" .) }}
+        {{- else }}
+          {{- range . }}
+            {{- if kindIs "string" . }}
+                {{- $imagePullSecrets = append $imagePullSecrets (dict "name" .) }}
+            {{- else }}
+                {{- $imagePullSecrets = append $imagePullSecrets . }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+        {{- toYaml $imagePullSecrets | nindent 8 }}
       {{- end }}
       {{- if .Values.longhornUI.priorityClass }}
       priorityClassName: {{ .Values.longhornUI.priorityClass | quote }}
