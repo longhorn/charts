@@ -43,49 +43,49 @@ image:
       # -- Repository for the Longhorn Engine image.
       repository: longhornio/longhorn-engine
       # -- Tag for the Longhorn Engine image.
-      tag: v1.9.1
+      tag: v1.10.0-rc1
     manager:
       # -- Registry for the Longhorn Manager image.
       registry: ""
       # -- Repository for the Longhorn Manager image.
       repository: longhornio/longhorn-manager
       # -- Tag for the Longhorn Manager image.
-      tag: v1.9.1
+      tag: v1.10.0-rc1
     ui:
       # -- Registry for the Longhorn UI image.
       registry: ""
       # -- Repository for the Longhorn UI image.
       repository: longhornio/longhorn-ui
       # -- Tag for the Longhorn UI image.
-      tag: v1.9.1
+      tag: v1.10.0-rc1
     instanceManager:
       # -- Registry for the Longhorn Instance Manager image.
       registry: ""
       # -- Repository for the Longhorn Instance Manager image.
       repository: longhornio/longhorn-instance-manager
       # -- Tag for the Longhorn Instance Manager image.
-      tag: v1.9.1
+      tag: v1.10.0-rc1
     shareManager:
       # -- Registry for the Longhorn Share Manager image.
       registry: ""
       # -- Repository for the Longhorn Share Manager image.
       repository: longhornio/longhorn-share-manager
       # -- Tag for the Longhorn Share Manager image.
-      tag: v1.9.1
+      tag: v1.10.0-rc1
     backingImageManager:
       # -- Registry for the Backing Image Manager image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the Backing Image Manager image. When unspecified, Longhorn uses the default value.
       repository: longhornio/backing-image-manager
       # -- Tag for the Backing Image Manager image. When unspecified, Longhorn uses the default value.
-      tag: v1.9.1
+      tag: v1.10.0-rc1
     supportBundleKit:
       # -- Registry for the Longhorn Support Bundle Manager image.
       registry: ""
       # -- Repository for the Longhorn Support Bundle Manager image.
       repository: longhornio/support-bundle-kit
       # -- Tag for the Longhorn Support Bundle Manager image.
-      tag: v0.0.61
+      tag: v0.0.64
   csi:
     attacher:
       # -- Registry for the CSI attacher image. When unspecified, Longhorn uses the default value.
@@ -93,49 +93,49 @@ image:
       # -- Repository for the CSI attacher image. When unspecified, Longhorn uses the default value.
       repository: longhornio/csi-attacher
       # -- Tag for the CSI attacher image. When unspecified, Longhorn uses the default value.
-      tag: v4.9.0-20250709
+      tag: v4.9.0-20250826
     provisioner:
       # -- Registry for the CSI Provisioner image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the CSI Provisioner image. When unspecified, Longhorn uses the default value.
       repository: longhornio/csi-provisioner
       # -- Tag for the CSI Provisioner image. When unspecified, Longhorn uses the default value.
-      tag: v5.3.0-20250709
+      tag: v5.3.0-20250826
     nodeDriverRegistrar:
       # -- Registry for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value.
       repository: longhornio/csi-node-driver-registrar
       # -- Tag for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value.
-      tag: v2.14.0-20250709
+      tag: v2.14.0-20250826
     resizer:
       # -- Registry for the CSI Resizer image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the CSI Resizer image. When unspecified, Longhorn uses the default value.
       repository: longhornio/csi-resizer
       # -- Tag for the CSI Resizer image. When unspecified, Longhorn uses the default value.
-      tag: v1.14.0-20250709
+      tag: v1.14.0-20250826
     snapshotter:
       # -- Registry for the CSI Snapshotter image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the CSI Snapshotter image. When unspecified, Longhorn uses the default value.
       repository: longhornio/csi-snapshotter
       # -- Tag for the CSI Snapshotter image. When unspecified, Longhorn uses the default value.
-      tag: v8.3.0-20250709
+      tag: v8.3.0-20250826
     livenessProbe:
       # -- Registry for the CSI liveness probe image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the CSI liveness probe image. When unspecified, Longhorn uses the default value.
       repository: longhornio/livenessprobe
       # -- Tag for the CSI liveness probe image. When unspecified, Longhorn uses the default value.
-      tag: v2.16.0-20250709
+      tag: v2.16.0-20250826
   openshift:
     oauthProxy:
       # -- Registry for the OAuth Proxy image. Specify the upstream image (for example, "quay.io/openshift/origin-oauth-proxy"). This setting applies only to OpenShift users.
       registry: ""
       # -- Repository for the OAuth Proxy image. Specify the upstream image (for example, "quay.io/openshift/origin-oauth-proxy"). This setting applies only to OpenShift users.
       repository: ""
-      # -- Tag for the OAuth Proxy image. Specify OCP/OKD version 4.1 or later (including version 4.15, which is available at quay.io/openshift/origin-oauth-proxy:4.15). This setting applies only to OpenShift users.
+      # -- Tag for the OAuth Proxy image. Specify OCP/OKD version 4.1 or later (including version 4.18, which is available at quay.io/openshift/origin-oauth-proxy:4.18). This setting applies only to OpenShift users.
       tag: ""
   # -- Image pull policy that applies to all user-deployed Longhorn components, such as Longhorn Manager, Longhorn driver, and Longhorn UI.
   pullPolicy: IfNotPresent
@@ -145,6 +145,12 @@ service:
     type: ClusterIP
     # -- NodePort port number for Longhorn UI. When unspecified, Longhorn selects a free port between 30000 and 32767.
     nodePort: null
+    # -- Annotation for the Longhorn UI service.
+    annotations: {}
+    ## If you want to set annotations for the Longhorn UI service, delete the `{}` in the line above
+    ## and uncomment this example block
+    #  annotation-key1: "annotation-value1"
+    #  annotation-key2: "annotation-value2"
   manager:
     # -- Service type for Longhorn Manager.
     type: ClusterIP
@@ -227,7 +233,7 @@ defaultSettings:
   allowRecurringJobWhileVolumeDetached: ~
   # -- Setting that allows Longhorn to automatically create a default disk only on nodes with the label "node.longhorn.io/create-default-disk=true" (if no other disks exist). When this setting is disabled, Longhorn creates a default disk on each node that is added to the cluster.
   createDefaultDiskLabeledNodes: ~
-  # -- Default path for storing data on a host. The default value is "/var/lib/longhorn/".
+  # -- Default path to use for storing data on a host. An absolute directory path indicates a filesystem-type disk used by the V1 Data Engine, while a path to a block device indicates a block-type disk used by the V2 Data Engine. The default value is "/var/lib/longhorn/".
   defaultDataPath: ~
   # -- Default data locality. A Longhorn volume has data locality if a local replica of the volume exists on the same node as the pod that is using the volume.
   defaultDataLocality: ~
@@ -245,7 +251,7 @@ defaultSettings:
   upgradeChecker: ~
   # -- The Upgrade Responder sends a notification whenever a new Longhorn version that you can upgrade to becomes available. The default value is https://longhorn-upgrade-responder.rancher.io/v1/checkupgrade.
   upgradeResponderURL: ~
-  # -- Default number of replicas for volumes created using the Longhorn UI. For Kubernetes configuration, modify the `numberOfReplicas` field in the StorageClass. The default value is "3".
+  # -- Default number of replicas for volumes created using the Longhorn UI. For Kubernetes configuration, modify the `numberOfReplicas` field in the StorageClass. The default value is "{"v1":"3","v2":"3"}".
   defaultReplicaCount: ~
   # -- Default name of Longhorn static StorageClass. "storageClassName" is assigned to PVs and PVCs that are created for an existing Longhorn volume. "storageClassName" can also be used as a label, so it is possible to use a Longhorn StorageClass to bind a workload to an existing PV without creating a Kubernetes StorageClass object. "storageClassName" needs to be an existing StorageClass. The default value is "longhorn-static".
   defaultLonghornStaticStorageClass: ~
@@ -310,7 +316,7 @@ defaultSettings:
   backingImageCleanupWaitInterval: ~
   # -- Number of seconds that Longhorn waits before downloading a backing image file again when the status of all image disk files changes to "failed" or "unknown".
   backingImageRecoveryWaitInterval: ~
-  # -- Percentage of the total allocatable CPU resources on each node to be reserved for each instance manager pod when the V1 Data Engine is enabled. The default value is "12".
+  # -- Percentage of the total allocatable CPU resources on each node to be reserved for each instance manager pod. The default value is {"v1":"12","v2":"12"}.
   guaranteedInstanceManagerCPU: ~
   # -- Setting that notifies Longhorn that the cluster is using the Kubernetes Cluster Autoscaler.
   kubernetesClusterAutoscalerEnabled: ~
@@ -342,22 +348,28 @@ defaultSettings:
   longGRPCTimeOut: ~
   # -- Log levels that indicate the type and severity of logs in Longhorn Manager. The default value is "Info". (Options: "Panic", "Fatal", "Error", "Warn", "Info", "Debug", "Trace")
   logLevel: ~
+  # -- Specifies the directory on the host where Longhorn stores log files for the instance manager pod. Currently, it is only used for instance manager pods in the v2 data engine.
+  logPath: ~
   # -- Setting that allows you to specify a backup compression method.
   backupCompressionMethod: ~
   # -- Maximum number of worker threads that can concurrently run for each backup.
   backupConcurrentLimit: ~
+  # -- Specifies the default backup block size, in MiB, used when creating a new volume. Supported values are 2 or 16.
+  defaultBackupBlockSize: ~
   # -- Maximum number of worker threads that can concurrently run for each restore operation.
   restoreConcurrentLimit: ~
   # -- Setting that allows you to enable the V1 Data Engine.
   v1DataEngine: ~
   # -- Setting that allows you to enable the V2 Data Engine, which is based on the Storage Performance Development Kit (SPDK). The V2 Data Engine is an experimental feature and should not be used in production environments.
   v2DataEngine: ~
-  # -- Setting that allows you to configure maximum huge page size (in MiB) for the V2 Data Engine.
-  v2DataEngineHugepageLimit: ~
-  # -- Number of millicpus on each node to be reserved for each Instance Manager pod when the V2 Data Engine is enabled. The default value is "1250".
-  v2DataEngineGuaranteedInstanceManagerCPU: ~
-  # -- CPU cores on which the Storage Performance Development Kit (SPDK) target daemon should run. The SPDK target daemon is located in each Instance Manager pod. Ensure that the number of cores is less than or equal to the guaranteed Instance Manager CPUs for the V2 Data Engine. The default value is "0x1".
-  v2DataEngineCPUMask: ~
+  # -- Applies only to the V2 Data Engine. Specifies the hugepage size, in MiB, for the Storage Performance Development Kit (SPDK) target daemon. The default value is "{"v2":"0x1"}"
+  dataEngineHugepageLimit: ~
+  # -- Applies only to the V2 Data Engine. Specifies the CPU cores on which the Storage Performance Development Kit (SPDK) target daemon runs. The daemon is deployed in each Instance Manager pod. Ensure that the number of assigned cores does not exceed the guaranteed Instance Manager CPUs for the V2 Data Engine. The default value is "{"v2":"2048"}".
+  dataEngineCPUMask: ~
+  # -- This setting specifies the default write bandwidth limit (in megabytes per second) for volume replica rebuilding when using the v2 data engine (SPDK). If this value is set to 0, there will be no write bandwidth limitation. Individual volumes can override this setting by specifying their own rebuilding bandwidth limit.
+  replicaRebuildingBandwidthLimit: ~
+  # -- In seconds. The setting specifies the timeout for the instance manager pod liveness probe. The default value is 10 seconds.
+  instanceManagerPodLivenessProbeTimeout: ~
   # -- Setting that allows scheduling of empty node selector volumes to any node.
   allowEmptyNodeSelectorVolume: ~
   # -- Setting that allows scheduling of empty disk selector volumes to any disk.
@@ -368,12 +380,10 @@ defaultSettings:
   disableSnapshotPurge: ~
   # -- Maximum snapshot count for a volume. The value should be between 2 to 250
   snapshotMaxCount: ~
-  # -- Setting that allows you to configure the log level of the SPDK target daemon (spdk_tgt) of the V2 Data Engine.
-  v2DataEngineLogLevel: ~
-  # -- Setting that allows you to configure the log flags of the SPDK target daemon (spdk_tgt) of the V2 Data Engine.
-  v2DataEngineLogFlags: ~
-  # -- Setting allows you to enable or disable snapshot hashing and data integrity checking for the V2 Data Engine.
-  v2DataEngineSnapshotDataIntegrity: ~
+  # -- Applies only to the V2 Data Engine. Specifies the log level for the Storage Performance Development Kit (SPDK) target daemon. Supported values are: Error, Warning, Notice, Info, and Debug. The default is Notice.
+  dataEngineLogLevel: ~
+  # -- Applies only to the V2 Data Engine. Specifies the log flags for the Storage Performance Development Kit (SPDK) target daemon.
+  dataEngineLogFlags: ~
   # -- Setting that freezes the filesystem on the root partition before a snapshot is created.
   freezeFilesystemForSnapshot: ~
   # -- Setting that automatically cleans up the snapshot when the backup is deleted.
@@ -383,7 +393,7 @@ defaultSettings:
   # -- Setting that allows Longhorn to detect node failure and immediately migrate affected RWX volumes.
   rwxVolumeFastFailover: ~
   # -- Enables automatic rebuilding of degraded replicas while the volume is detached. This setting only takes effect if the individual volume setting is set to `ignored` or `enabled`.
-  offlineRelicaRebuilding: ~
+  offlineReplicaRebuilding: ~
 # -- Setting that allows you to update the default backupstore.
 defaultBackupStore:
   # -- Endpoint used to access the default backupstore. (Options: "NFS", "CIFS", "AWS", "GCP", "AZURE")
