@@ -1703,6 +1703,16 @@ spec:
                     properties:
                       cpuMask:
                         type: string
+                      interruptModeEnabled:
+                        description: |-
+                          InterruptModeEnabled indicates whether the V2 data engine is running in
+                          interrupt mode (true) or polling mode (false). Set by Longhorn manager;
+                          read-only to users.
+                        enum:
+                        - ""
+                        - "true"
+                        - "false"
+                        type: string
                     type: object
                 type: object
               instanceEngines:
@@ -3490,6 +3500,12 @@ spec:
               backupTargetName:
                 description: The backup target name that the volume will be backed
                   up to or is synced.
+                type: string
+              cloneMode:
+                enum:
+                - ""
+                - full-copy
+                - linked-clone
                 type: string
               dataEngine:
                 enum:
