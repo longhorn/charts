@@ -46,6 +46,8 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: spec.serviceAccountName
+          - name: TZ
+            value: {{ .Values.longhornManager.timezone | quote }}
           {{- if .Values.csi.kubeletRootDir }}
           - name: KUBELET_ROOT_DIR
             value: {{ .Values.csi.kubeletRootDir }}

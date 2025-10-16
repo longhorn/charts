@@ -419,6 +419,7 @@ longhornManager:
   log:
     # -- Format of Longhorn Manager logs. (Options: "plain", "json")
     format: plain
+  timezone: UTC
   # -- PriorityClass for Longhorn Manager.
   priorityClass: *defaultPriorityClassNameRef
   # -- Toleration for Longhorn Manager on nodes allowed to run Longhorn components.

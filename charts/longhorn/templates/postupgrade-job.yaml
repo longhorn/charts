@@ -27,6 +27,8 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        - name: TZ
+          value: {{ .Values.longhornManager.timezone | quote }}
       restartPolicy: OnFailure
       {{- with (coalesce .Values.global.imagePullSecrets .Values.privateRegistry.registrySecret) }}
       imagePullSecrets:

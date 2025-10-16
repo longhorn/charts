@@ -98,6 +98,8 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
+        - name: TZ
+          value: {{ .Values.longhornManager.timezone | quote }}
         {{- if .Values.enableGoCoverDir }}
         - name: GOCOVERDIR
           value: /go-cover-dir/
