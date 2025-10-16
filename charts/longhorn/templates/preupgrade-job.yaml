@@ -33,8 +33,10 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        {{- if .Values.longhornManager.timezone }}
         - name: TZ
           value: {{ .Values.longhornManager.timezone | quote }}
+        {{- end }}
       volumes:
       - name: proc
         hostPath:

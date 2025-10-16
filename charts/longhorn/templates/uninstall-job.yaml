@@ -28,8 +28,10 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        {{- if .Values.longhornManager.timezone }}
         - name: TZ
           value: {{ .Values.longhornManager.timezone | quote }}
+        {{- end }}
       restartPolicy: Never
       {{- with (coalesce .Values.global.imagePullSecrets .Values.privateRegistry.registrySecret) }}
       imagePullSecrets:
