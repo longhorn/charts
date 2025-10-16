@@ -419,7 +419,9 @@ longhornManager:
   log:
     # -- Format of Longhorn Manager logs. (Options: "plain", "json")
     format: plain
-  timezone: UTC
+  ## Timezone for Longhorn Manager. (Options: null (use the node's timezone), "UTC", or any IANA Time Zone database name such as "America/New_York", "Asia/Tokyo", "Europe/Berlin")
+  ## This affects the time shown in the Longhorn UI and the timezone used on the time for cronjob if you set any cronjob based settings.
+  timezone: ~
   # -- PriorityClass for Longhorn Manager.
   priorityClass: *defaultPriorityClassNameRef
   # -- Toleration for Longhorn Manager on nodes allowed to run Longhorn components.
