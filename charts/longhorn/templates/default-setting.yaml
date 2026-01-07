@@ -36,6 +36,9 @@ data:
     {{- if not (kindIs "invalid" .Values.defaultSettings.upgradeResponderURL) }}
     upgrade-responder-url: {{ .Values.defaultSettings.upgradeResponderURL | quote }}
     {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.managerUrl) }}
+    manager-url: {{ .Values.defaultSettings.managerUrl | quote }}
+    {{- end }}
     {{- if not (kindIs "invalid" .Values.defaultSettings.defaultReplicaCount) }}
     default-replica-count: {{ include "longhorn.multiTypeSetting" .Values.defaultSettings.defaultReplicaCount }}
     {{- end }}
@@ -74,7 +77,7 @@ data:
       {{- if not (kindIs "invalid" .Values.defaultSettings.taintToleration) -}}
         {{- $defaultSettingTaintToleration = .Values.defaultSettings.taintToleration -}}
       {{- end -}}
-      {{- $taintToleration := list $windowsDefaultSettingTaintToleration $defaultSettingTaintToleration }}{{ join ";" (compact $taintToleration) -}}
+      {{- $taintToleration := list $windowsDefaultSettingTaintToleration $defaultSettingTaintToleration }}{{ join ";" (compact $taintToleration) | quote -}}
     {{- end }}
     {{- if or (not (kindIs "invalid" .Values.defaultSettings.systemManagedComponentsNodeSelector)) (.Values.global.cattle.windowsCluster.enabled) }}
     system-managed-components-node-selector: {{ $windowsDefaultSettingNodeSelector := list }}{{ $defaultSettingNodeSelector := list -}}
@@ -84,7 +87,10 @@ data:
       {{- if not (kindIs "invalid" .Values.defaultSettings.systemManagedComponentsNodeSelector) -}}
         {{- $defaultSettingNodeSelector = .Values.defaultSettings.systemManagedComponentsNodeSelector -}}
       {{- end -}}
-      {{- $nodeSelector := list $windowsDefaultSettingNodeSelector $defaultSettingNodeSelector }}{{ join ";" (compact $nodeSelector) -}}
+      {{- $nodeSelector := list $windowsDefaultSettingNodeSelector $defaultSettingNodeSelector }}{{ join ";" (compact $nodeSelector) | quote -}}
+    {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.systemManagedCSIComponentsResourceLimits) }}
+    system-managed-csi-components-resource-limits: {{ .Values.defaultSettings.systemManagedCSIComponentsResourceLimits | quote }}
     {{- end }}
     {{- if not (kindIs "invalid" .Values.defaultSettings.priorityClass) }}
     priority-class: {{ .Values.defaultSettings.priorityClass | quote }}
@@ -121,6 +127,9 @@ data:
     {{- end }}
     {{- if not (kindIs "invalid" .Values.defaultSettings.concurrentReplicaRebuildPerNodeLimit) }}
     concurrent-replica-rebuild-per-node-limit: {{ .Values.defaultSettings.concurrentReplicaRebuildPerNodeLimit | quote }}
+    {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.rebuildConcurrentSyncLimit) }}
+    rebuild-concurrent-sync-limit: {{ include "longhorn.multiTypeSetting" .Values.defaultSettings.rebuildConcurrentSyncLimit }}
     {{- end }}
     {{- if not (kindIs "invalid" .Values.defaultSettings.concurrentVolumeBackupRestorePerNodeLimit) }}
     concurrent-volume-backup-restore-per-node-limit: {{ .Values.defaultSettings.concurrentVolumeBackupRestorePerNodeLimit | quote }}
@@ -163,6 +172,9 @@ data:
     {{- end }}
     {{- if not (kindIs "invalid" .Values.defaultSettings.storageNetwork) }}
     storage-network: {{ .Values.defaultSettings.storageNetwork | quote }}
+    {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.endpointNetworkForRWXVolume) }}
+    endpoint-network-for-rwx-volume: {{ .Values.defaultSettings.endpointNetworkForRWXVolume | quote }}
     {{- end }}
     {{- if not (kindIs "invalid" .Values.defaultSettings.deletingConfirmationFlag) }}
     deleting-confirmation-flag: {{ .Values.defaultSettings.deletingConfirmationFlag }}
@@ -263,6 +275,18 @@ data:
     {{- if not (kindIs "invalid" .Values.defaultSettings.replicaRebuildingBandwidthLimit) }}
     replica-rebuilding-bandwidth-limit: {{ include "longhorn.multiTypeSetting" .Values.defaultSettings.replicaRebuildingBandwidthLimit }}
     {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.replicaRebuildingBandwidthLimit) }}
+    default-ublk-queue-depth: {{ include "longhorn.multiTypeSetting" .Values.defaultSettings.defaultUblkQueueDepth }}
+    {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.replicaRebuildingBandwidthLimit) }}
+    default-ublk-number-of-queue: {{ include "longhorn.multiTypeSetting" .Values.defaultSettings.defaultUblkNumberOfQueue }}
+    {{- end }}
     {{- if not (kindIs "invalid" .Values.defaultSettings.instanceManagerPodLivenessProbeTimeout) }}
     instance-manager-pod-liveness-probe-timeout: {{ .Values.defaultSettings.instanceManagerPodLivenessProbeTimeout | quote }}
+    {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.snapshotHeavyTaskConcurrentLimit) }}
+    snapshot-heavy-task-concurrent-limit: {{ .Values.defaultSettings.snapshotHeavyTaskConcurrentLimit | quote }}
+    {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.nodeDiskHealthMonitoring) }}
+    node-disk-health-monitoring: {{ .Values.defaultSettings.nameodeDiskHealthMonitoring }}
     {{- end }}
