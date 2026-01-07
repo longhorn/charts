@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: backingimagedatasources.longhorn.io
@@ -136,7 +136,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: backingimagemanagers.longhorn.io
@@ -273,7 +273,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: backingimages.longhorn.io
@@ -452,7 +452,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: backupbackingimages.longhorn.io
@@ -619,7 +619,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: backups.longhorn.io
@@ -700,7 +700,6 @@ spec:
                 enum:
                 - full
                 - incremental
-                - ""
                 type: string
               labels:
                 additionalProperties:
@@ -806,7 +805,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: backuptargets.longhorn.io
@@ -943,7 +942,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: backupvolumes.longhorn.io
@@ -1085,7 +1084,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: engineimages.longhorn.io
@@ -1233,7 +1232,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: engines.longhorn.io
@@ -1324,6 +1323,14 @@ spec:
                 type: boolean
               nodeID:
                 type: string
+              rebuildConcurrentSyncLimit:
+                description: |-
+                  RebuildConcurrentSyncLimit controls the maximum number of file synchronization operations that can run
+                  concurrently during a single replica rebuild.
+                  It is determined by the global setting or the volume spec field with the same name.
+                maximum: 5
+                minimum: 0
+                type: integer
               replicaAddressMap:
                 additionalProperties:
                   type: string
@@ -1341,6 +1348,14 @@ spec:
               snapshotMaxSize:
                 format: int64
                 type: string
+              ublkNumberOfQueue:
+                description: ublkNumberOfQueue controls the number of queues for ublk
+                  frontend.
+                type: integer
+              ublkQueueDepth:
+                description: ublkQueueDepth controls the depth of each queue for ublk
+                  frontend.
+                type: integer
               unmapMarkSnapChainRemovedEnabled:
                 type: boolean
               upgradedReplicaAddressMap:
@@ -1467,6 +1482,13 @@ spec:
                   type: object
                 nullable: true
                 type: object
+              rebuildConcurrentSyncLimit:
+                description: |-
+                  RebuildConcurrentSyncLimit controls the maximum number of file synchronization operations that can run
+                  concurrently during a single replica rebuild.
+                  It is determined by the global setting or the volume spec field with the same name.
+                minimum: 0
+                type: integer
               rebuildStatus:
                 additionalProperties:
                   properties:
@@ -1476,7 +1498,13 @@ spec:
                     error:
                       type: string
                     fromReplicaAddress:
+                      description: Deprecated. We are now using FromReplicaAddressList
+                        to list all source replicas.
                       type: string
+                    fromReplicaAddressList:
+                      items:
+                        type: string
+                      type: array
                     isRebuilding:
                       type: boolean
                     progress:
@@ -1582,7 +1610,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: instancemanagers.longhorn.io
@@ -1695,6 +1723,35 @@ spec:
                   type: object
                 nullable: true
                 type: object
+              conditions:
+                items:
+                  properties:
+                    lastProbeTime:
+                      description: Last time we probed the condition.
+                      type: string
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      type: string
+                    message:
+                      description: Human-readable message indicating details about
+                        last transition.
+                      type: string
+                    reason:
+                      description: Unique, one-word, CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: |-
+                        Status is the status of the condition.
+                        Can be True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type is the type of the condition.
+                      type: string
+                  type: object
+                nullable: true
+                type: array
               currentState:
                 type: string
               dataEngineStatus:
@@ -1817,58 +1874,6 @@ spec:
                   type: object
                 nullable: true
                 type: object
-              instances:
-                additionalProperties:
-                  properties:
-                    spec:
-                      properties:
-                        dataEngine:
-                          type: string
-                        name:
-                          type: string
-                      type: object
-                    status:
-                      properties:
-                        conditions:
-                          additionalProperties:
-                            type: boolean
-                          nullable: true
-                          type: object
-                        endpoint:
-                          type: string
-                        errorMsg:
-                          type: string
-                        listen:
-                          type: string
-                        portEnd:
-                          format: int32
-                          type: integer
-                        portStart:
-                          format: int32
-                          type: integer
-                        resourceVersion:
-                          format: int64
-                          type: integer
-                        state:
-                          type: string
-                        targetPortEnd:
-                          format: int32
-                          type: integer
-                        targetPortStart:
-                          format: int32
-                          type: integer
-                        type:
-                          type: string
-                        ublkID:
-                          format: int32
-                          type: integer
-                        uuid:
-                          type: string
-                      type: object
-                  type: object
-                description: 'Deprecated: Replaced by InstanceEngines and InstanceReplicas'
-                nullable: true
-                type: object
               ip:
                 type: string
               ownerID:
@@ -1888,7 +1893,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: nodes.longhorn.io
@@ -2066,6 +2071,63 @@ spec:
                       type: string
                     filesystemType:
                       type: string
+                    healthData:
+                      additionalProperties:
+                        properties:
+                          attributes:
+                            items:
+                              properties:
+                                id:
+                                  type: integer
+                                name:
+                                  type: string
+                                rawString:
+                                  type: string
+                                rawValue:
+                                  format: int64
+                                  type: integer
+                                threshold:
+                                  type: integer
+                                value:
+                                  type: integer
+                                whenFailed:
+                                  type: string
+                                worst:
+                                  type: integer
+                              type: object
+                            type: array
+                          capacity:
+                            format: int64
+                            type: integer
+                          diskName:
+                            type: string
+                          diskType:
+                            type: string
+                          firmwareVersion:
+                            type: string
+                          healthStatus:
+                            enum:
+                            - FAILED
+                            - PASSED
+                            - UNKNOWN
+                            - WARNING
+                            type: string
+                          modelName:
+                            type: string
+                          serialNumber:
+                            type: string
+                          source:
+                            enum:
+                            - SMART
+                            - SPDK
+                            type: string
+                          temperature:
+                            type: integer
+                        type: object
+                      type: object
+                    healthDataLastCollectedAt:
+                      format: date-time
+                      type: string
                     instanceManagerName:
                       type: string
                     scheduledBackingImage:
@@ -2113,7 +2175,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: orphans.longhorn.io
@@ -2232,7 +2294,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: recurringjobs.longhorn.io
@@ -2369,7 +2431,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: replicas.longhorn.io
@@ -2596,7 +2658,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: settings.longhorn.io
@@ -2672,7 +2734,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: sharemanagers.longhorn.io
@@ -2756,7 +2818,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: snapshots.longhorn.io
@@ -2885,7 +2947,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: supportbundles.longhorn.io
@@ -3016,7 +3078,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: systembackups.longhorn.io
@@ -3153,7 +3215,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: systemrestores.longhorn.io
@@ -3262,7 +3324,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: volumeattachments.longhorn.io
@@ -3406,7 +3468,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.1
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels: {{- include "longhorn.labels" . | nindent 4 }}
     longhorn-manager: ""
   name: volumes.longhorn.io
@@ -3479,10 +3541,14 @@ spec:
               accessMode:
                 enum:
                 - rwo
+                - rwop
                 - rwx
                 type: string
               backingImage:
                 type: string
+                x-kubernetes-validations:
+                - message: BackingImage is immutable
+                  rule: self == oldSelf
               backupBlockSize:
                 description: BackupBlockSize indicate the block size to create backups.
                   The block size is immutable.
@@ -3528,6 +3594,9 @@ spec:
                 type: array
               encrypted:
                 type: boolean
+                x-kubernetes-validations:
+                - message: Encrypted is immutable
+                  rule: self == oldSelf
               freezeFilesystemForSnapshot:
                 description: Setting that freezes the filesystem on the root partition
                   before a snapshot is created.
@@ -3573,6 +3642,14 @@ spec:
                 - disabled
                 - enabled
                 type: string
+              rebuildConcurrentSyncLimit:
+                description: |-
+                  RebuildConcurrentSyncLimit controls the maximum number of file synchronization operations that can run
+                  concurrently during a single replica rebuild.
+                  When set to 0, it means following the global setting.
+                maximum: 5
+                minimum: 0
+                type: integer
               replicaAutoBalance:
                 enum:
                 - ignored
@@ -3636,6 +3713,14 @@ spec:
                 format: int64
                 type: string
               staleReplicaTimeout:
+                type: integer
+              ublkNumberOfQueue:
+                description: ublkNumberOfQueue controls the number of queues for ublk
+                  frontend.
+                type: integer
+              ublkQueueDepth:
+                description: ublkQueueDepth controls the depth of each queue for ublk
+                  frontend.
                 type: integer
               unmapMarkSnapChainRemoved:
                 enum:
