@@ -485,7 +485,7 @@ longhornManager:
   ## if you prefer that behavior.
   updateStrategy:
     rollingUpdate:
-      maxUnavailable: "100%"
+      maxUnavailable: "50%"
 longhornDriver:
   log:
     # -- Format of longhorn-driver logs. (Options: "plain", "json")
