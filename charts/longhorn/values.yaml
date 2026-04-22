@@ -316,6 +316,9 @@ defaultSettings:
   detachManuallyAttachedVolumesWhenCordoned: ~
   # -- Number of seconds that Longhorn waits before reusing existing data on a failed replica instead of creating a new replica of a degraded volume.
   replicaReplenishmentWaitInterval: ~
+  # -- Number of minutes that Longhorn waits before cleaning up a stale replica that is no longer part of the volume engine.
+  # Setting this to 0 will cause the stale replicas to be cleaned up immediately. The default value is "2880" (48 hours).
+  staleReplicaTimeout: ~
   # -- Maximum number of replicas that can be concurrently rebuilt on each node.
   concurrentReplicaRebuildPerNodeLimit: ~
   # -- Maximum number of file synchronization operations that can run concurrently during a single replica rebuild. Right now, it's for v1 data engine only.
