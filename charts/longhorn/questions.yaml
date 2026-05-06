@@ -17,7 +17,7 @@ questions:
         label: Longhorn Manager Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.manager.tag
-        default: v1.11.0
+        default: v1.12.0-rc1
         description: Tag for the Longhorn Manager image.
         type: string
         label: Longhorn Manager Image Tag
@@ -29,7 +29,7 @@ questions:
         label: Longhorn Engine Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.engine.tag
-        default: v1.11.0
+        default: v1.12.0-rc1
         description: Tag for the Longhorn Engine image.
         type: string
         label: Longhorn Engine Image Tag
@@ -41,7 +41,7 @@ questions:
         label: Longhorn UI Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.ui.tag
-        default: v1.11.0
+        default: v1.12.0-rc1
         description: Tag for the Longhorn UI image.
         type: string
         label: Longhorn UI Image Tag
@@ -53,7 +53,7 @@ questions:
         label: Longhorn Instance Manager Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.instanceManager.tag
-        default: v1.11.0
+        default: v1.12.0-rc1
         description: Tag for the Longhorn Instance Manager image.
         type: string
         label: Longhorn Instance Manager Image Tag
@@ -65,7 +65,7 @@ questions:
         label: Longhorn Share Manager Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.shareManager.tag
-        default: v1.11.0
+        default: v1.12.0-rc1
         description: Tag for the Longhorn Share Manager image.
         type: string
         label: Longhorn Share Manager Image Tag
@@ -78,7 +78,7 @@ questions:
         label: Longhorn Backing Image Manager Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.backingImageManager.tag
-        default: v1.11.0
+        default: v1.12.0-rc1
         description: >-
           Tag for the Backing Image Manager image. When unspecified, Longhorn uses the default value.
         type: string
@@ -91,7 +91,7 @@ questions:
         label: Longhorn Support Bundle Kit Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.supportBundleKit.tag
-        default: v0.0.79
+        default: v0.0.84
         description: Tag for the Longhorn Support Bundle Manager image.
         type: string
         label: Longhorn Support Bundle Kit Image Tag
@@ -104,7 +104,7 @@ questions:
         label: Longhorn CSI Attacher Image Repository
         group: Longhorn CSI Driver Images
       - variable: image.csi.attacher.tag
-        default: v4.10.0-20251226
+        default: v4.11.0-20260428
         description: >-
           Tag for the CSI attacher image. When unspecified, Longhorn uses the default value.
         type: string
@@ -118,7 +118,7 @@ questions:
         label: Longhorn CSI Provisioner Image Repository
         group: Longhorn CSI Driver Images
       - variable: image.csi.provisioner.tag
-        default: v5.3.0-20251226
+        default: v5.3.0-20260428
         description: >-
           Tag for the CSI Provisioner image. When unspecified, Longhorn uses the default value.
         type: string
@@ -132,7 +132,7 @@ questions:
         label: Longhorn CSI Node Driver Registrar Image Repository
         group: Longhorn CSI Driver Images
       - variable: image.csi.nodeDriverRegistrar.tag
-        default: v2.15.0-20251226
+        default: v2.16.0-20260428
         description: >-
           Tag for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value.
         type: string
@@ -146,7 +146,7 @@ questions:
         label: Longhorn CSI Driver Resizer Image Repository
         group: Longhorn CSI Driver Images
       - variable: image.csi.resizer.tag
-        default: v2.0.0-20251226
+        default: v2.1.0-20260428
         description: >-
           Tag for the CSI Resizer image. When unspecified, Longhorn uses the default value.
         type: string
@@ -160,7 +160,7 @@ questions:
         label: Longhorn CSI Driver Snapshotter Image Repository
         group: Longhorn CSI Driver Images
       - variable: image.csi.snapshotter.tag
-        default: v8.4.0-20251226
+        default: v8.5.0-20260428
         description: >-
           Tag for the CSI Snapshotter image. When unspecified, Longhorn uses the default value.
         type: string
@@ -174,7 +174,7 @@ questions:
         label: Longhorn CSI Liveness Probe Image Repository
         group: Longhorn CSI Driver Images
       - variable: image.csi.livenessProbe.tag
-        default: v2.17.0-20251226
+        default: v2.18.0-20260428
         description: >-
           Tag for the CSI liveness probe image. When unspecified, Longhorn uses the default value.
         type: string
@@ -289,6 +289,15 @@ questions:
         min: 2
         max: 250
         default: 250
+      - variable: defaultSettings.snapshotCountWarningThreshold
+        label: Snapshot Count Warning Threshold
+        description: >-
+          Warning threshold for the count-based TooManySnapshots volume condition. The value should be between 2 to 250.
+        group: Longhorn Default Settings
+        type: int
+        min: 2
+        max: 250
+        default: 100
       - variable: defaultSettings.createDefaultDiskLabeledNodes
         label: Create Default Disk on Labeled Nodes
         description: >-
@@ -374,7 +383,7 @@ questions:
       - variable: defaultSettings.managerUrl
         label: Manager URL
         description: >-
-          The external URL used to access the Longhorn Manager API. When set, this URL is returned in API responses (the actions and links fields) instead of the internal pod IP. This is useful when accessing the API through Ingress or Gateway API HTTPRoute. Format: scheme://host[:port] (for example, https://longhorn.example.com or https://longhorn.example.com:8443). Leave it empty to use the default behavior.
+          The external URL used to access the Longhorn Manager API. When set, this URL is returned in API responses (the actions and links fields) instead of the internal pod IP. This is useful when accessing the API through Ingress or Gateway API HTTPRoute. Format: scheme://host[:port] (for example, https://longhorn.example.com or https://longhorn.example.com:8443). Leave it empty to use the default behavior. Warning: Internal components (including longhorn-driver-deployer and longhorn-csi-plugin) follow the links returned in API responses. If this URL passes through proxy middleware (such as an OAuth2 proxy, ingress auth, or any other HTTP-intercepting layer), those components may receive an unexpected response (such as an HTML redirect) instead of JSON, causing errors such as "invalid character '<' looking for beginning of value" and CSI driver deployment failure.
         group: Longhorn Default Settings
         type: string
         default: ''
@@ -919,6 +928,33 @@ questions:
         min: 1
         max: 60
         default: 10
+      - variable: defaultSettings.engineImagePodLivenessProbePeriod
+        label: Engine Image Pod Liveness Probe Period
+        description: >-
+          Interval (in seconds) between liveness probes for engine image pods.
+        group: Longhorn Default Settings
+        type: int
+        min: 1
+        max: 60
+        default: 5
+      - variable: defaultSettings.engineImagePodLivenessProbeTimeout
+        label: Engine Image Pod Liveness Probe Timeout
+        description: >-
+          Time (in seconds) to wait for a liveness probe to complete before marking it as failed.
+        group: Longhorn Default Settings
+        type: int
+        min: 1
+        max: 60
+        default: 4
+      - variable: defaultSettings.engineImagePodLivenessProbeFailureThreshold
+        label: Engine Image Pod Liveness Probe Failure Threshold
+        description: >-
+          Number of consecutive failed probes required to trigger a pod restart.
+        group: Longhorn Default Settings
+        type: int
+        min: 1
+        max: 60
+        default: 3
       - variable: defaultSettings.snapshotHeavyTaskConcurrentLimit
         label: Snapshot Heavy Task Concurrent Limit
         description: >-
@@ -931,6 +967,27 @@ questions:
         label: Node Disk Health Monitoring
         description: >-
           Controls whether Longhorn monitors and records health information for node disks. When disabled, disk health checks and status updates are skipped.
+        group: Longhorn Default Settings
+        type: boolean
+        default: true
+      - variable: defaultSettings.csiAllowedTopologyKeys
+        label: CSI Allowed Topology Keys
+        description: >-
+          Comma-separated list of topology keys that the Longhorn CSI driver is allowed to pass through. When empty (default), no topology keys are passed through, and PVs will have no nodeAffinity. When configured (e.g., "topology.kubernetes.io/zone,topology.kubernetes.io/region"), only the specified keys are kept in topology segments. All other keys are filtered out from both CreateVolumeResponse.AccessibleTopology and NodeGetInfo topology.
+        group: Longhorn Default Settings
+        type: string
+        default: null
+      - variable: defaultSettings.csiStorageCapacityTracking
+        label: CSI Storage Capacity Tracking
+        description: >-
+          Controls CSI storage capacity tracking, which allows the kube-scheduler to filter nodes that cannot fit the requested volume.
+        group: Longhorn Default Settings
+        type: boolean
+        default: false
+      - variable: defaultSettings.kubernetesMetricsServerMetricsEnabled
+        label: Kubernetes Metrics Server Metrics Enabled
+        description: >-
+          Allows Longhorn to query the Kubernetes Metrics Server ('metrics.k8s.io') for pod and node resource usage.
         group: Longhorn Default Settings
         type: boolean
         default: true
@@ -1053,6 +1110,38 @@ questions:
         label: Storage Class Node Selector
         description: >-
           Node selector for the default Longhorn StorageClass. Longhorn uses only nodes with the specified tags for storing volume data. (Examples: "storage,fast")
+        group: Longhorn Storage Class Settings
+        type: string
+        default: null
+  - variable: persistence.shareManagerNodeSelector.enable
+    description: >-
+      Setting that allows you to enable the share manager node selector for the default Longhorn StorageClass.
+    group: Longhorn Storage Class Settings
+    label: Enable Storage Class Share Manager Node Selector
+    type: boolean
+    default: false
+    show_subquestion_if: true
+    subquestions:
+      - variable: persistence.shareManagerNodeSelector.selector
+        label: Storage Class Share Manager Node Selector
+        description: >-
+          Node selector for the share manager pods of the default Longhorn StorageClass. Longhorn schedules share manager pods only on nodes with the specified tags. (Examples: "storage,fast")
+        group: Longhorn Storage Class Settings
+        type: string
+        default: null
+  - variable: persistence.shareManagerTolerations.enable
+    description: >-
+      Setting that allows you to enable the share manager tolerations for the default Longhorn StorageClass.
+    group: Longhorn Storage Class Settings
+    label: Enable Storage Class Share Manager Tolerations
+    type: boolean
+    default: false
+    show_subquestion_if: true
+    subquestions:
+      - variable: persistence.shareManagerTolerations.tolerations
+        label: Storage Class Share Manager Tolerations
+        description: >-
+          Tolerations for the share manager pods of the default Longhorn StorageClass. Specify values using a semicolon-separated list in `kubectl taint` syntax. (Example: "key1=value1:effect; key2=value2:effect")
         group: Longhorn Storage Class Settings
         type: string
         default: null

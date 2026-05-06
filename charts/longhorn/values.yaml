@@ -45,49 +45,49 @@ image:
       # -- Repository for the Longhorn Engine image.
       repository: longhornio/longhorn-engine
       # -- Tag for the Longhorn Engine image.
-      tag: v1.11.0
+      tag: v1.12.0-rc1
     manager:
       # -- Registry for the Longhorn Manager image.
       registry: ""
       # -- Repository for the Longhorn Manager image.
       repository: longhornio/longhorn-manager
       # -- Tag for the Longhorn Manager image.
-      tag: v1.11.0
+      tag: v1.12.0-rc1
     ui:
       # -- Registry for the Longhorn UI image.
       registry: ""
       # -- Repository for the Longhorn UI image.
       repository: longhornio/longhorn-ui
       # -- Tag for the Longhorn UI image.
-      tag: v1.11.0
+      tag: v1.12.0-rc1
     instanceManager:
       # -- Registry for the Longhorn Instance Manager image.
       registry: ""
       # -- Repository for the Longhorn Instance Manager image.
       repository: longhornio/longhorn-instance-manager
       # -- Tag for the Longhorn Instance Manager image.
-      tag: v1.11.0
+      tag: v1.12.0-rc1
     shareManager:
       # -- Registry for the Longhorn Share Manager image.
       registry: ""
       # -- Repository for the Longhorn Share Manager image.
       repository: longhornio/longhorn-share-manager
       # -- Tag for the Longhorn Share Manager image.
-      tag: v1.11.0
+      tag: v1.12.0-rc1
     backingImageManager:
       # -- Registry for the Backing Image Manager image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the Backing Image Manager image. When unspecified, Longhorn uses the default value.
       repository: longhornio/backing-image-manager
       # -- Tag for the Backing Image Manager image. When unspecified, Longhorn uses the default value.
-      tag: v1.11.0
+      tag: v1.12.0-rc1
     supportBundleKit:
       # -- Registry for the Longhorn Support Bundle Manager image.
       registry: ""
       # -- Repository for the Longhorn Support Bundle Manager image.
       repository: longhornio/support-bundle-kit
       # -- Tag for the Longhorn Support Bundle Manager image.
-      tag: v0.0.79
+      tag: v0.0.84
   csi:
     attacher:
       # -- Registry for the CSI attacher image. When unspecified, Longhorn uses the default value.
@@ -95,42 +95,42 @@ image:
       # -- Repository for the CSI attacher image. When unspecified, Longhorn uses the default value.
       repository: longhornio/csi-attacher
       # -- Tag for the CSI attacher image. When unspecified, Longhorn uses the default value.
-      tag: v4.10.0-20251226
+      tag: v4.11.0-20260428
     provisioner:
       # -- Registry for the CSI Provisioner image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the CSI Provisioner image. When unspecified, Longhorn uses the default value.
       repository: longhornio/csi-provisioner
       # -- Tag for the CSI Provisioner image. When unspecified, Longhorn uses the default value.
-      tag: v5.3.0-20251226
+      tag: v5.3.0-20260428
     nodeDriverRegistrar:
       # -- Registry for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value.
       repository: longhornio/csi-node-driver-registrar
       # -- Tag for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value.
-      tag: v2.15.0-20251226
+      tag: v2.16.0-20260428
     resizer:
       # -- Registry for the CSI Resizer image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the CSI Resizer image. When unspecified, Longhorn uses the default value.
       repository: longhornio/csi-resizer
       # -- Tag for the CSI Resizer image. When unspecified, Longhorn uses the default value.
-      tag: v2.0.0-20251226
+      tag: v2.1.0-20260428
     snapshotter:
       # -- Registry for the CSI Snapshotter image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the CSI Snapshotter image. When unspecified, Longhorn uses the default value.
       repository: longhornio/csi-snapshotter
       # -- Tag for the CSI Snapshotter image. When unspecified, Longhorn uses the default value.
-      tag: v8.4.0-20251226
+      tag: v8.5.0-20260428
     livenessProbe:
       # -- Registry for the CSI liveness probe image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the CSI liveness probe image. When unspecified, Longhorn uses the default value.
       repository: longhornio/livenessprobe
       # -- Tag for the CSI liveness probe image. When unspecified, Longhorn uses the default value.
-      tag: v2.17.0-20251226
+      tag: v2.18.0-20260428
   openshift:
     oauthProxy:
       # -- Registry for the OAuth Proxy image. Specify the upstream image (for example, "quay.io/openshift/origin-oauth-proxy"). This setting applies only to OpenShift users.
@@ -166,6 +166,8 @@ service:
     # -- NodePort port number for Longhorn Manager. When unspecified, Longhorn selects a free port between 30000 and 32767.
     nodePort: ""
 persistence:
+  # -- Setting that allows you to create the default Longhorn StorageClass ConfigMap. Set to false to skip StorageClass creation.
+  createStorageClass: true
   # -- Setting that allows you to specify the default Longhorn StorageClass.
   defaultClass: true
   # -- Filesystem type of the default Longhorn StorageClass.
@@ -215,6 +217,16 @@ persistence:
     enable: false
     # -- Node selector for the default Longhorn StorageClass. Longhorn uses only nodes with the specified tags for storing volume data. (Examples: "storage,fast")
     selector: ""
+  shareManagerNodeSelector:
+    # -- Setting that allows you to enable the share manager node selector for the default Longhorn StorageClass.
+    enable: false
+    # -- Node selector for the share manager pods of the default Longhorn StorageClass. Longhorn schedules share manager pods only on nodes with the specified tags. (Examples: "storage,fast")
+    selector: ""
+  shareManagerTolerations:
+    # -- Setting that allows you to enable the share manager tolerations for the default Longhorn StorageClass.
+    enable: false
+    # -- Tolerations for the share manager pods of the default Longhorn StorageClass. Specify values using a semicolon-separated list in `kubectl taint` syntax. (Example: "key1=value1:effect; key2=value2:effect")
+    tolerations: ""
   # -- Setting that allows you to enable automatic snapshot removal during filesystem trim for a Longhorn StorageClass. (Options: "ignored", "enabled", "disabled")
   unmapMarkSnapChainRemoved: ignored
   # -- Setting that allows you to specify the data engine version for the default Longhorn StorageClass. (Options: "v1", "v2")
@@ -262,7 +274,7 @@ defaultSettings:
   upgradeChecker: ~
   # -- The Upgrade Responder sends a notification whenever a new Longhorn version that you can upgrade to becomes available. The default value is https://longhorn-upgrade-responder.rancher.io/v1/checkupgrade.
   upgradeResponderURL: ~
-  # -- The external URL used to access the Longhorn Manager API. When set, this URL is returned in API responses (the actions and links fields) instead of the internal pod IP. This is useful when accessing the API through Ingress or Gateway API HTTPRoute. Format: scheme://host[:port] (for example, https://longhorn.example.com or https://longhorn.example.com:8443). Leave it empty to use the default behavior.
+  # -- URL prefix embedded in Longhorn Manager API response links (the "actions" and "links" fields). When set, internal components such as longhorn-driver-deployer and longhorn-csi-plugin will follow links using this URL, so it must be reachable from within the cluster without authentication. Setting this to an externally-facing URL that is protected by auth middleware (e.g. OAuth2 proxy, ingress auth) will cause internal components to receive an HTML redirect instead of JSON, resulting in "invalid character '<'" errors and CSI driver deployment failure. Use this setting only when the URL is accessible unauthenticated from inside the cluster. Format: scheme://host[:port] (for example, http://longhorn.example.com). Leave empty to use the default behavior (internal pod IP). Note: this value is persisted in the manager-url Setting CR; removing it from Helm values does not automatically clear the CR. To reset, manually set the manager-url Setting CR value to empty via the Longhorn UI or kubectl.
   managerUrl: ~
   # -- Default number of replicas for volumes created using the Longhorn UI. For Kubernetes configuration, modify the `numberOfReplicas` field in the StorageClass. The default value is "{"v1":"3","v2":"3"}".
   defaultReplicaCount: ~
@@ -400,6 +412,12 @@ defaultSettings:
   defaultUblkQueueDepth: ~
   # -- This setting specifies the default the number of queues for ublk frontend. This setting applies to volumes using the V2 Data Engine with Ublk front end. Individual volumes can override this setting by specifying their own number of queues for ublk.
   defaultUblkNumberOfQueue: ~
+  # -- In seconds. The setting specifies the interval between liveness probes for engine image pods. The default value is 5 seconds.
+  engineImagePodLivenessProbePeriod: ~
+  # -- In seconds. The setting specifies the timeout for the engine image pod liveness probe. The default value is 4 seconds.
+  engineImagePodLivenessProbeTimeout: ~
+  # -- The setting specifies the number of consecutive failed liveness probes before an engine image pod is restarted. The default value is 3.
+  engineImagePodLivenessProbeFailureThreshold: ~
   # -- In seconds. The setting specifies the timeout for the instance manager pod liveness probe. The default value is 10 seconds.
   instanceManagerPodLivenessProbeTimeout: ~
   # -- Setting that allows scheduling of empty node selector volumes to any node.
@@ -412,6 +430,8 @@ defaultSettings:
   disableSnapshotPurge: ~
   # -- Maximum snapshot count for a volume. The value should be between 2 to 250
   snapshotMaxCount: ~
+  # -- Warning threshold for the count-based TooManySnapshots volume condition. The value should be between 2 to 250. Default is 100.
+  snapshotCountWarningThreshold: ~
   # -- Applies only to the V2 Data Engine. Specifies the log level for the Storage Performance Development Kit (SPDK) target daemon. Supported values are: Error, Warning, Notice, Info, and Debug. The default is Notice.
   dataEngineLogLevel: ~
   # -- Applies only to the V2 Data Engine. Specifies the log flags for the Storage Performance Development Kit (SPDK) target daemon.
@@ -428,6 +448,12 @@ defaultSettings:
   offlineReplicaRebuilding: ~
   # -- Controls whether Longhorn monitors and records health information for node disks. When disabled, disk health checks and status updates are skipped.
   nodeDiskHealthMonitoring: ~
+  # -- Comma-separated list of topology keys that the Longhorn CSI driver is allowed to pass through. When empty (default), no topology keys are passed through, and PVs will have no nodeAffinity. When configured (e.g., "topology.kubernetes.io/zone,topology.kubernetes.io/region"), only the specified keys are kept in topology segments. All other keys are filtered out from both CreateVolumeResponse.AccessibleTopology and NodeGetInfo topology.
+  csiAllowedTopologyKeys: ~
+  # -- Setting that controls CSI storage capacity tracking, which allows the kube-scheduler to filter nodes that cannot fit the requested volume.
+  csiStorageCapacityTracking: ~
+  # -- Setting that allows Longhorn to query the Kubernetes Metrics Server ('metrics.k8s.io') for pod and node resource usage.
+  kubernetesMetricsServerMetricsEnabled: ~
 # -- Setting that allows you to update the default backupstore.
 defaultBackupStore:
   # -- Endpoint used to access the default backupstore. (Options: "NFS", "CIFS", "AWS", "GCP", "AZURE")
@@ -451,6 +477,8 @@ longhornManager:
   log:
     # -- Format of Longhorn Manager logs. (Options: "plain", "json")
     format: plain
+  # -- Optional distro identifier used for upgrade responder reporting. Supported values: "oss", "prime", "dev".
+  distro: "oss"
   # -- PriorityClass for Longhorn Manager.
   priorityClass: *defaultPriorityClassNameRef
   # -- Toleration for Longhorn Manager on nodes allowed to run Longhorn components.
@@ -570,7 +598,7 @@ ingress:
   ##
   ## If tls is set to true, annotation ingress.kubernetes.io/secure-backends: "true" will automatically be set
   # -- Ingress annotations in the form of key-value pairs.
-  annotations:
+  annotations: {}
   #  kubernetes.io/ingress.class: nginx
   #  kubernetes.io/tls-acme: true
 
@@ -642,6 +670,8 @@ metrics:
     # documentation](https://prometheus-operator.dev/docs/api-reference/api/#monitoring.coreos.com/v1.Endpoint) for
     # formatting details.
     metricRelabelings: []
+    # -- Per-scrape sample limit. A value of 0 (default) omits sampleLimit.
+    sampleLimit: 0
 ## openshift settings
 openshift:
   # -- Setting that allows Longhorn to integrate with OpenShift.
