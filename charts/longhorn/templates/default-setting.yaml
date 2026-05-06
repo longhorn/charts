@@ -248,6 +248,9 @@ data:
     {{- if not (kindIs "invalid" .Values.defaultSettings.snapshotMaxCount) }}
     snapshot-max-count: {{ .Values.defaultSettings.snapshotMaxCount | quote }}
     {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.snapshotCountWarningThreshold) }}
+    snapshot-count-warning-threshold: {{ .Values.defaultSettings.snapshotCountWarningThreshold | quote }}
+    {{- end }}
     {{- if not (kindIs "invalid" .Values.defaultSettings.dataEngineLogLevel) }}
     data-engine-log-level: {{ include "longhorn.multiTypeSetting" .Values.defaultSettings.dataEngineLogLevel }}
     {{- end }}
@@ -275,11 +278,20 @@ data:
     {{- if not (kindIs "invalid" .Values.defaultSettings.replicaRebuildingBandwidthLimit) }}
     replica-rebuilding-bandwidth-limit: {{ include "longhorn.multiTypeSetting" .Values.defaultSettings.replicaRebuildingBandwidthLimit }}
     {{- end }}
-    {{- if not (kindIs "invalid" .Values.defaultSettings.replicaRebuildingBandwidthLimit) }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.defaultUblkQueueDepth) }}
     default-ublk-queue-depth: {{ include "longhorn.multiTypeSetting" .Values.defaultSettings.defaultUblkQueueDepth }}
     {{- end }}
-    {{- if not (kindIs "invalid" .Values.defaultSettings.replicaRebuildingBandwidthLimit) }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.defaultUblkNumberOfQueue) }}
     default-ublk-number-of-queue: {{ include "longhorn.multiTypeSetting" .Values.defaultSettings.defaultUblkNumberOfQueue }}
+    {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.engineImagePodLivenessProbePeriod) }}
+    engine-image-pod-liveness-probe-period: {{ .Values.defaultSettings.engineImagePodLivenessProbePeriod | quote }}
+    {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.engineImagePodLivenessProbeTimeout) }}
+    engine-image-pod-liveness-probe-timeout: {{ .Values.defaultSettings.engineImagePodLivenessProbeTimeout | quote }}
+    {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.engineImagePodLivenessProbeFailureThreshold) }}
+    engine-image-pod-liveness-probe-failure-threshold: {{ .Values.defaultSettings.engineImagePodLivenessProbeFailureThreshold | quote }}
     {{- end }}
     {{- if not (kindIs "invalid" .Values.defaultSettings.instanceManagerPodLivenessProbeTimeout) }}
     instance-manager-pod-liveness-probe-timeout: {{ .Values.defaultSettings.instanceManagerPodLivenessProbeTimeout | quote }}
@@ -288,5 +300,14 @@ data:
     snapshot-heavy-task-concurrent-limit: {{ .Values.defaultSettings.snapshotHeavyTaskConcurrentLimit | quote }}
     {{- end }}
     {{- if not (kindIs "invalid" .Values.defaultSettings.nodeDiskHealthMonitoring) }}
-    node-disk-health-monitoring: {{ .Values.defaultSettings.nameodeDiskHealthMonitoring }}
+    node-disk-health-monitoring: {{ .Values.defaultSettings.nodeDiskHealthMonitoring }}
+    {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.csiAllowedTopologyKeys) }}
+    csi-allowed-topology-keys: {{ .Values.defaultSettings.csiAllowedTopologyKeys | quote }}
+    {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.csiStorageCapacityTracking) }}
+    csi-storage-capacity-tracking: {{ .Values.defaultSettings.csiStorageCapacityTracking | quote }}
+    {{- end }}
+    {{- if not (kindIs "invalid" .Values.defaultSettings.kubernetesMetricsServerMetricsEnabled) }}
+    kubernetes-metrics-server-metrics-enabled: {{ .Values.defaultSettings.kubernetesMetricsServerMetricsEnabled }}
     {{- end }}
