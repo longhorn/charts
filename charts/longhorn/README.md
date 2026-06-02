@@ -98,13 +98,13 @@ The `values.yaml` contains items used to tweak a deployment of this chart.
 |-----|------|---------|-------------|
 | image.csi.attacher.registry | string | `""` | Registry for the CSI attacher image. When unspecified, Longhorn uses the default value. |
 | image.csi.attacher.repository | string | `"longhornio/csi-attacher"` | Repository for the CSI attacher image. When unspecified, Longhorn uses the default value. |
-| image.csi.attacher.tag | string | `"v4.11.0-20260514"` | Tag for the CSI attacher image. When unspecified, Longhorn uses the default value. |
+| image.csi.attacher.tag | string | `"v4.12.0"` | Tag for the CSI attacher image. When unspecified, Longhorn uses the default value. |
 | image.csi.livenessProbe.registry | string | `""` | Registry for the CSI liveness probe image. When unspecified, Longhorn uses the default value. |
 | image.csi.livenessProbe.repository | string | `"longhornio/livenessprobe"` | Repository for the CSI liveness probe image. When unspecified, Longhorn uses the default value. |
-| image.csi.livenessProbe.tag | string | `"v2.18.0-20260514"` | Tag for the CSI liveness probe image. When unspecified, Longhorn uses the default value. |
+| image.csi.livenessProbe.tag | string | `"v2.19.0"` | Tag for the CSI liveness probe image. When unspecified, Longhorn uses the default value. |
 | image.csi.nodeDriverRegistrar.registry | string | `""` | Registry for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value. |
 | image.csi.nodeDriverRegistrar.repository | string | `"longhornio/csi-node-driver-registrar"` | Repository for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value. |
-| image.csi.nodeDriverRegistrar.tag | string | `"v2.16.0-20260514"` | Tag for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value. |
+| image.csi.nodeDriverRegistrar.tag | string | `"v2.17.0"` | Tag for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value. |
 | image.csi.provisioner.registry | string | `""` | Registry for the CSI Provisioner image. When unspecified, Longhorn uses the default value. |
 | image.csi.provisioner.repository | string | `"longhornio/csi-provisioner"` | Repository for the CSI Provisioner image. When unspecified, Longhorn uses the default value. |
 | image.csi.provisioner.tag | string | `"v5.3.0-20260514"` | Tag for the CSI Provisioner image. When unspecified, Longhorn uses the default value. |
@@ -116,25 +116,25 @@ The `values.yaml` contains items used to tweak a deployment of this chart.
 | image.csi.snapshotter.tag | string | `"v8.5.0-20260514"` | Tag for the CSI Snapshotter image. When unspecified, Longhorn uses the default value. |
 | image.longhorn.backingImageManager.registry | string | `""` | Registry for the Backing Image Manager image. When unspecified, Longhorn uses the default value. |
 | image.longhorn.backingImageManager.repository | string | `"longhornio/backing-image-manager"` | Repository for the Backing Image Manager image. When unspecified, Longhorn uses the default value. |
-| image.longhorn.backingImageManager.tag | string | `"v1.12.0-rc3"` | Tag for the Backing Image Manager image. When unspecified, Longhorn uses the default value. |
+| image.longhorn.backingImageManager.tag | string | `"v1.12.0-rc4"` | Tag for the Backing Image Manager image. When unspecified, Longhorn uses the default value. |
 | image.longhorn.engine.registry | string | `""` | Registry for the Longhorn Engine image. |
 | image.longhorn.engine.repository | string | `"longhornio/longhorn-engine"` | Repository for the Longhorn Engine image. |
-| image.longhorn.engine.tag | string | `"v1.12.0-rc3"` | Tag for the Longhorn Engine image. |
+| image.longhorn.engine.tag | string | `"v1.12.0-rc4"` | Tag for the Longhorn Engine image. |
 | image.longhorn.instanceManager.registry | string | `""` | Registry for the Longhorn Instance Manager image. |
 | image.longhorn.instanceManager.repository | string | `"longhornio/longhorn-instance-manager"` | Repository for the Longhorn Instance Manager image. |
-| image.longhorn.instanceManager.tag | string | `"v1.12.0-rc3"` | Tag for the Longhorn Instance Manager image. |
+| image.longhorn.instanceManager.tag | string | `"v1.12.0-rc4"` | Tag for the Longhorn Instance Manager image. |
 | image.longhorn.manager.registry | string | `""` | Registry for the Longhorn Manager image. |
 | image.longhorn.manager.repository | string | `"longhornio/longhorn-manager"` | Repository for the Longhorn Manager image. |
-| image.longhorn.manager.tag | string | `"v1.12.0-rc3"` | Tag for the Longhorn Manager image. |
+| image.longhorn.manager.tag | string | `"v1.12.0-rc4"` | Tag for the Longhorn Manager image. |
 | image.longhorn.shareManager.registry | string | `""` | Registry for the Longhorn Share Manager image. |
 | image.longhorn.shareManager.repository | string | `"longhornio/longhorn-share-manager"` | Repository for the Longhorn Share Manager image. |
-| image.longhorn.shareManager.tag | string | `"v1.12.0-rc3"` | Tag for the Longhorn Share Manager image. |
+| image.longhorn.shareManager.tag | string | `"v1.12.0-rc4"` | Tag for the Longhorn Share Manager image. |
 | image.longhorn.supportBundleKit.registry | string | `""` | Registry for the Longhorn Support Bundle Manager image. |
 | image.longhorn.supportBundleKit.repository | string | `"longhornio/support-bundle-kit"` | Repository for the Longhorn Support Bundle Manager image. |
 | image.longhorn.supportBundleKit.tag | string | `"v0.0.86"` | Tag for the Longhorn Support Bundle Manager image. |
 | image.longhorn.ui.registry | string | `""` | Registry for the Longhorn UI image. |
 | image.longhorn.ui.repository | string | `"longhornio/longhorn-ui"` | Repository for the Longhorn UI image. |
-| image.longhorn.ui.tag | string | `"v1.12.0-rc3"` | Tag for the Longhorn UI image. |
+| image.longhorn.ui.tag | string | `"v1.12.0-rc4"` | Tag for the Longhorn UI image. |
 | image.openshift.oauthProxy.registry | string | `""` | Registry for the OAuth Proxy image. Specify the upstream image (for example, "quay.io/openshift/origin-oauth-proxy"). This setting applies only to OpenShift users. |
 | image.openshift.oauthProxy.repository | string | `""` | Repository for the OAuth Proxy image. Specify the upstream image (for example, "quay.io/openshift/origin-oauth-proxy"). This setting applies only to OpenShift users. |
 | image.openshift.oauthProxy.tag | string | `""` | Tag for the OAuth Proxy image. Specify OCP/OKD version 4.1 or later (including version 4.18, which is available at quay.io/openshift/origin-oauth-proxy:4.18). This setting applies only to OpenShift users. |
@@ -347,7 +347,7 @@ During installation, you can either allow Longhorn to use the default system set
 | defaultSettings.createDefaultDiskLabeledNodes | Setting that allows Longhorn to automatically create a default disk only on nodes with the label "node.longhorn.io/create-default-disk=true" (if no other disks exist). When this setting is disabled, Longhorn creates a default disk on each node that is added to the cluster. |
 | defaultSettings.csiAllowedTopologyKeys | Comma-separated list of topology keys that the Longhorn CSI driver is allowed to pass through. When empty (default), no topology keys are passed through, and PVs will have no nodeAffinity. When configured (e.g., "topology.kubernetes.io/zone,topology.kubernetes.io/region"), only the specified keys are kept in topology segments. All other keys are filtered out from both CreateVolumeResponse.AccessibleTopology and NodeGetInfo topology. |
 | defaultSettings.csiStorageCapacityTracking | Setting that controls CSI storage capacity tracking, which allows the kube-scheduler to filter nodes that cannot fit the requested volume. |
-| defaultSettings.dataEngineCPUMask | Applies only to the V2 Data Engine. Specifies the CPU cores on which the Storage Performance Development Kit (SPDK) target daemon runs. The daemon is deployed in each Instance Manager pod. Ensure that the number of assigned cores does not exceed the guaranteed Instance Manager CPUs for the V2 Data Engine. The default value is "{"v2":"0x1"}". |
+| defaultSettings.dataEngineCPUMask | Applies only to the V2 Data Engine. Specifies the CPU cores on which the Storage Performance Development Kit (SPDK) target daemon runs. The daemon is deployed in each Instance Manager pod. Ensure that the assigned CPU cores do not exceed the guaranteed CPUs allocated to the V2 Data Engine Instance Manager. A minimum of 2 CPU cores is recommended. SPDK uses a busy-polling reactor model where the master reactor handles both I/O polling and management RPCs. When only a single core is assigned, heavy I/O workloads can delay or starve RPC processing, resulting in increased latency, timeout events, and operational instability. Assigning 2 or more cores allows I/O and management tasks to run on separate reactors, improving responsiveness and operational stability. Accepts either hexadecimal CPU masks (for example, 0x3 or 0xff) or CPU list format (for example, 0-1,2,5). CPU lists are automatically converted to hexadecimal masks. The default value is 0x3. |
 | defaultSettings.dataEngineHugepageEnabled | Applies only to the V2 Data Engine. Enables hugepages for the Storage Performance Development Kit (SPDK) target daemon. If disabled, legacy memory is used. Allocation size is set via the Data Engine Memory Size setting. |
 | defaultSettings.dataEngineLogFlags | Applies only to the V2 Data Engine. Specifies the log flags for the Storage Performance Development Kit (SPDK) target daemon. |
 | defaultSettings.dataEngineLogLevel | Applies only to the V2 Data Engine. Specifies the log level for the Storage Performance Development Kit (SPDK) target daemon. Supported values are: Error, Warning, Notice, Info, and Debug. The default is Notice. |
