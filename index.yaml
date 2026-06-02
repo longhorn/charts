@@ -2,6 +2,38 @@ apiVersion: v1
 entries:
   longhorn:
   - apiVersion: v1
+    appVersion: v1.12.0
+    created: "2026-06-02T13:00:39.280878047Z"
+    description: Longhorn is a distributed block storage system for Kubernetes.
+    digest: 869bb20701b154473606f1e8967b27f34f2448a2dfe6eb8970f1cae6957384f5
+    home: https://github.com/longhorn/longhorn
+    icon: https://raw.githubusercontent.com/cncf/artwork/master/projects/longhorn/icon/color/longhorn-icon-color.png
+    keywords:
+    - longhorn
+    - storage
+    - distributed
+    - block
+    - device
+    - iscsi
+    - nfs
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - email: maintainers@longhorn.io
+      name: Longhorn maintainers
+    name: longhorn
+    sources:
+    - https://github.com/longhorn/longhorn
+    - https://github.com/longhorn/longhorn-engine
+    - https://github.com/longhorn/longhorn-instance-manager
+    - https://github.com/longhorn/longhorn-share-manager
+    - https://github.com/longhorn/longhorn-manager
+    - https://github.com/longhorn/longhorn-ui
+    - https://github.com/longhorn/longhorn-tests
+    - https://github.com/longhorn/backing-image-manager
+    urls:
+    - https://github.com/longhorn/charts/releases/download/longhorn-1.12.0/longhorn-1.12.0.tgz
+    version: 1.12.0
+  - apiVersion: v1
     appVersion: v1.11.2
     created: "2026-05-05T06:16:52.828945862Z"
     description: Longhorn is a distributed block storage system for Kubernetes.
@@ -1600,4 +1632,4 @@ entries:
     urls:
     - https://github.com/longhorn/charts/releases/download/longhorn-1.0.0/longhorn-1.0.0.tgz
     version: 1.0.0
-generated: "2026-05-05T06:16:52.829132381Z"
+generated: "2026-06-02T13:00:39.28108277Z"
