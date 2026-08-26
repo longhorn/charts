@@ -5,7 +5,7 @@ entries:
     appVersion: v1.12.1
     created: "2026-08-14T01:31:57.645190171Z"
     description: Longhorn is a distributed block storage system for Kubernetes.
-    digest: d70764e2d6cce673482da4d91da5b44a9791cda842c1914f77e7806ad1cd94bb
+    digest: c8cf4b35a9d872cd5f7e44fd26d8e6ac7c2abaee42f4e2f2a0b0ebbc6e3a6116
     home: https://github.com/longhorn/longhorn
     icon: https://raw.githubusercontent.com/cncf/artwork/master/projects/longhorn/icon/color/longhorn-icon-color.png
     keywords:
