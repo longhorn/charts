@@ -17,7 +17,7 @@ questions:
         label: Longhorn Manager Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.manager.tag
-        default: v1.12.1
+        default: v1.13.0-rc1
         description: Tag for the Longhorn Manager image.
         type: string
         label: Longhorn Manager Image Tag
@@ -29,7 +29,7 @@ questions:
         label: Longhorn Engine Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.engine.tag
-        default: v1.12.1
+        default: v1.13.0-rc1
         description: Tag for the Longhorn Engine image.
         type: string
         label: Longhorn Engine Image Tag
@@ -41,7 +41,7 @@ questions:
         label: Longhorn UI Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.ui.tag
-        default: v1.12.1
+        default: v1.13.0-rc1
         description: Tag for the Longhorn UI image.
         type: string
         label: Longhorn UI Image Tag
@@ -53,7 +53,7 @@ questions:
         label: Longhorn Instance Manager Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.instanceManager.tag
-        default: v1.12.1
+        default: v1.13.0-rc1
         description: Tag for the Longhorn Instance Manager image.
         type: string
         label: Longhorn Instance Manager Image Tag
@@ -65,7 +65,7 @@ questions:
         label: Longhorn Share Manager Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.shareManager.tag
-        default: v1.12.1
+        default: v1.13.0-rc1
         description: Tag for the Longhorn Share Manager image.
         type: string
         label: Longhorn Share Manager Image Tag
@@ -78,7 +78,7 @@ questions:
         label: Longhorn Backing Image Manager Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.backingImageManager.tag
-        default: v1.12.1
+        default: v1.13.0-rc1
         description: >-
           Tag for the Backing Image Manager image. When unspecified, Longhorn uses the default value.
         type: string
@@ -91,7 +91,7 @@ questions:
         label: Longhorn Support Bundle Kit Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.supportBundleKit.tag
-        default: v0.0.92
+        default: v0.0.93
         description: Tag for the Longhorn Support Bundle Manager image.
         type: string
         label: Longhorn Support Bundle Kit Image Tag
@@ -118,7 +118,7 @@ questions:
         label: Longhorn CSI Provisioner Image Repository
         group: Longhorn CSI Driver Images
       - variable: image.csi.provisioner.tag
-        default: v5.3.0
+        default: v6.3.0
         description: >-
           Tag for the CSI Provisioner image. When unspecified, Longhorn uses the default value.
         type: string
@@ -272,6 +272,13 @@ questions:
         description: >-
           Replica count of the CSI Snapshotter. When unspecified, Longhorn uses the default value ("3").
         label: Longhorn CSI Snapshotter replica count
+        group: Longhorn CSI Driver Settings
+      - variable: csi.volumeGroupSnapshotEnabled
+        type: boolean
+        default: false
+        description: >-
+          Enable CSI VolumeGroupSnapshot support by turning on the CSIVolumeGroupSnapshot feature gate of the CSI Snapshotter. Requires the VolumeGroupSnapshot CRDs (groupsnapshot.storage.k8s.io) to be installed first; otherwise the CSI Snapshotter stops serving regular volume snapshots.
+        label: Longhorn CSI VolumeGroupSnapshot support
         group: Longhorn CSI Driver Settings
       - variable: defaultSettings.allowRecurringJobWhileVolumeDetached
         label: Allow Recurring Job While Volume Is Detached
@@ -954,6 +961,13 @@ questions:
         group: Longhorn Default Settings
         type: string
         default: '{"v2":"0"}'
+      - variable: defaultSettings.defaultNvmeTcpNrIoQueues
+        label: Default NVMe-TCP Number Of IO Queues
+        description: >-
+          The default number of I/O queues the kernel initiator creates when connecting a volume frontend over NVMe-TCP. This setting applies to volumes using the V2 Data Engine with the block device front end, takes effect on (re)attach, and can be overridden per volume. 0 means unspecified (kernel default, one queue per online core).
+        group: Longhorn Default Settings
+        type: string
+        default: '{"v2":"0"}'
       - variable: defaultSettings.instanceManagerPodLivenessProbeTimeout
         label: Instance Manager Pod Liveness Probe Timeout
         description: >-
@@ -1306,6 +1320,13 @@ questions:
         type: string
         required: true
         label: Hostnames (JSON array)
+      - variable: httproute.filters
+        default: '[]'
+        description: >-
+          Gateway API filters (such as authentication middleware) to attach to the HTTPRoute rule for the Longhorn UI service. It is a JSON array of HTTPRouteFilter objects. Example: '[{"type":"ExtensionRef","extensionRef":{"group":"traefik.io","kind":"Middleware","name":"oauth-forwardauth"}}]'
+        type: string
+        required: false
+        label: Filters (JSON array)
       - variable: httproute.path
         default: /
         description: >-
