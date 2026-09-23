@@ -121,25 +121,25 @@ The `values.yaml` contains items used to tweak a deployment of this chart.
 | image.csi.snapshotter.tag | string | `"v8.6.0"` | Tag for the CSI Snapshotter image. When unspecified, Longhorn uses the default value. |
 | image.longhorn.backingImageManager.registry | string | `""` | Registry for the Backing Image Manager image. When unspecified, Longhorn uses the default value. |
 | image.longhorn.backingImageManager.repository | string | `"longhornio/backing-image-manager"` | Repository for the Backing Image Manager image. When unspecified, Longhorn uses the default value. |
-| image.longhorn.backingImageManager.tag | string | `"v1.13.0-rc2"` | Tag for the Backing Image Manager image. When unspecified, Longhorn uses the default value. |
+| image.longhorn.backingImageManager.tag | string | `"v1.13.0-rc3"` | Tag for the Backing Image Manager image. When unspecified, Longhorn uses the default value. |
 | image.longhorn.engine.registry | string | `""` | Registry for the Longhorn Engine image. |
 | image.longhorn.engine.repository | string | `"longhornio/longhorn-engine"` | Repository for the Longhorn Engine image. |
-| image.longhorn.engine.tag | string | `"v1.13.0-rc2"` | Tag for the Longhorn Engine image. |
+| image.longhorn.engine.tag | string | `"v1.13.0-rc3"` | Tag for the Longhorn Engine image. |
 | image.longhorn.instanceManager.registry | string | `""` | Registry for the Longhorn Instance Manager image. |
 | image.longhorn.instanceManager.repository | string | `"longhornio/longhorn-instance-manager"` | Repository for the Longhorn Instance Manager image. |
-| image.longhorn.instanceManager.tag | string | `"v1.13.0-rc2"` | Tag for the Longhorn Instance Manager image. |
+| image.longhorn.instanceManager.tag | string | `"v1.13.0-rc3"` | Tag for the Longhorn Instance Manager image. |
 | image.longhorn.manager.registry | string | `""` | Registry for the Longhorn Manager image. |
 | image.longhorn.manager.repository | string | `"longhornio/longhorn-manager"` | Repository for the Longhorn Manager image. |
-| image.longhorn.manager.tag | string | `"v1.13.0-rc2"` | Tag for the Longhorn Manager image. |
+| image.longhorn.manager.tag | string | `"v1.13.0-rc3"` | Tag for the Longhorn Manager image. |
 | image.longhorn.shareManager.registry | string | `""` | Registry for the Longhorn Share Manager image. |
 | image.longhorn.shareManager.repository | string | `"longhornio/longhorn-share-manager"` | Repository for the Longhorn Share Manager image. |
-| image.longhorn.shareManager.tag | string | `"v1.13.0-rc2"` | Tag for the Longhorn Share Manager image. |
+| image.longhorn.shareManager.tag | string | `"v1.13.0-rc3"` | Tag for the Longhorn Share Manager image. |
 | image.longhorn.supportBundleKit.registry | string | `""` | Registry for the Longhorn Support Bundle Manager image. |
 | image.longhorn.supportBundleKit.repository | string | `"longhornio/support-bundle-kit"` | Repository for the Longhorn Support Bundle Manager image. |
-| image.longhorn.supportBundleKit.tag | string | `"v0.0.96"` | Tag for the Longhorn Support Bundle Manager image. |
+| image.longhorn.supportBundleKit.tag | string | `"v0.0.97"` | Tag for the Longhorn Support Bundle Manager image. |
 | image.longhorn.ui.registry | string | `""` | Registry for the Longhorn UI image. |
 | image.longhorn.ui.repository | string | `"longhornio/longhorn-ui"` | Repository for the Longhorn UI image. |
-| image.longhorn.ui.tag | string | `"v1.13.0-rc2"` | Tag for the Longhorn UI image. |
+| image.longhorn.ui.tag | string | `"v1.13.0-rc3"` | Tag for the Longhorn UI image. |
 | image.openshift.oauthProxy.registry | string | `""` | Registry for the OAuth Proxy image. Specify the upstream image (for example, "quay.io/openshift/origin-oauth-proxy"). This setting applies only to OpenShift users. |
 | image.openshift.oauthProxy.repository | string | `""` | Repository for the OAuth Proxy image. Specify the upstream image (for example, "quay.io/openshift/origin-oauth-proxy"). This setting applies only to OpenShift users. |
 | image.openshift.oauthProxy.tag | string | `""` | Tag for the OAuth Proxy image. Specify OCP/OKD version 4.1 or later (including version 4.18, which is available at quay.io/openshift/origin-oauth-proxy:4.18). This setting applies only to OpenShift users. |
@@ -200,6 +200,7 @@ The `values.yaml` contains items used to tweak a deployment of this chart.
 
 | Key | Description |
 |-----|-------------|
+| csi.allowControllerSecretAccess | Grant CSI controller sidecars cluster-wide get access to Kubernetes Secrets. Enabled by default for compatibility with existing Secret references. Disable only when Longhorn StorageClasses use no provisioner or controller-side Secret parameters and no existing PV requires controller-side Secret access. Encrypted volumes must retain their node-stage, node-publish, and node-expand Secret references. |
 | csi.attacherReplicaCount | Replica count of the CSI Attacher. When unspecified, Longhorn uses the default value ("3"). |
 | csi.kubeletRootDir | kubelet root directory. When unspecified, Longhorn uses the default value. |
 | csi.podAntiAffinityPreset | Configures Pod anti-affinity to prevent multiple instances on the same node. Use soft (tries to separate) or hard (must separate). When unspecified, Longhorn uses the default value ("soft"). |
