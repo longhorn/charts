@@ -73,7 +73,11 @@ spec:
           mountPath: /host/etc/
           readOnly: true
         - name: longhorn
+        {{- if not (kindIs "invalid" .Values.defaultSettings.defaultDataPath) }}
+          mountPath: {{ .Values.defaultSettings.defaultDataPath }}
+        {{ else }}
           mountPath: /var/lib/longhorn/
+        {{- end }}
           mountPropagation: Bidirectional
         - name: longhorn-grpc-tls
           mountPath: /tls-files/
@@ -130,7 +134,11 @@ spec:
           path: /etc/
       - name: longhorn
         hostPath:
+        {{- if not (kindIs "invalid" .Values.defaultSettings.defaultDataPath) }}
+          path: {{ .Values.defaultSettings.defaultDataPath }}
+        {{ else }}
           path: /var/lib/longhorn/
+        {{- end }}
       {{- if .Values.enableGoCoverDir }}
       - name: go-cover-dir
         hostPath:
