@@ -41,7 +41,7 @@ networkPolicies:
   type: "k3s"
   # -- Kubernetes API server source CIDRs allowed to access the Longhorn admission webhook. When empty, source filtering is disabled.
   kubeAPIServerSourceCIDRs: []
-  # -- Source CIDRs observed by the CNI for V1 iSCSI initiator traffic. When empty, any source that can reach instance-manager can connect to TCP/3260.
+  # -- Source CIDRs allowed to access the V1 iSCSI target on TCP/3260 of instance-manager pods when `restrictInternalTraffic` is enabled. When empty, no dedicated TCP/3260 ingress rule is generated. Access remains subject to the existing instance-manager `NetworkPolicy` rules and the Kubernetes node-local traffic allowance. Set this value if the CNI does not exempt node-originated iSCSI traffic from `NetworkPolicy` enforcement, or if iSCSI initiators outside the node require access. Use the narrowest CIDRs matching the effective source addresses observed by the CNI.
   v1DataEngineInitiatorSourceCIDRs: []
   # -- Additional TCP ports used by recovery backend mesh transport.
   recoveryBackendAdditionalIngressPorts: []
@@ -55,49 +55,49 @@ image:
       # -- Repository for the Longhorn Engine image.
       repository: longhornio/longhorn-engine
       # -- Tag for the Longhorn Engine image.
-      tag: v1.13.0
+      tag: v1.13.1-rc1
     manager:
       # -- Registry for the Longhorn Manager image.
       registry: ""
       # -- Repository for the Longhorn Manager image.
       repository: longhornio/longhorn-manager
       # -- Tag for the Longhorn Manager image.
-      tag: v1.13.0
+      tag: v1.13.1-rc1
     ui:
       # -- Registry for the Longhorn UI image.
       registry: ""
       # -- Repository for the Longhorn UI image.
       repository: longhornio/longhorn-ui
       # -- Tag for the Longhorn UI image.
-      tag: v1.13.0
+      tag: v1.13.1-rc1
     instanceManager:
       # -- Registry for the Longhorn Instance Manager image.
       registry: ""
       # -- Repository for the Longhorn Instance Manager image.
       repository: longhornio/longhorn-instance-manager
       # -- Tag for the Longhorn Instance Manager image.
-      tag: v1.13.0
+      tag: v1.13.1-rc1
     shareManager:
       # -- Registry for the Longhorn Share Manager image.
       registry: ""
       # -- Repository for the Longhorn Share Manager image.
       repository: longhornio/longhorn-share-manager
       # -- Tag for the Longhorn Share Manager image.
-      tag: v1.13.0
+      tag: v1.13.1-rc1
     backingImageManager:
       # -- Registry for the Backing Image Manager image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the Backing Image Manager image. When unspecified, Longhorn uses the default value.
       repository: longhornio/backing-image-manager
       # -- Tag for the Backing Image Manager image. When unspecified, Longhorn uses the default value.
-      tag: v1.13.0
+      tag: v1.13.1-rc1
     supportBundleKit:
       # -- Registry for the Longhorn Support Bundle Manager image.
       registry: ""
       # -- Repository for the Longhorn Support Bundle Manager image.
       repository: longhornio/support-bundle-kit
       # -- Tag for the Longhorn Support Bundle Manager image.
-      tag: v0.0.98
+      tag: v1.1.0
   csi:
     attacher:
       # -- Registry for the CSI attacher image. When unspecified, Longhorn uses the default value.
@@ -105,42 +105,42 @@ image:
       # -- Repository for the CSI attacher image. When unspecified, Longhorn uses the default value.
       repository: longhornio/csi-attacher
       # -- Tag for the CSI attacher image. When unspecified, Longhorn uses the default value.
-      tag: v4.13.0
+      tag: v4.13.0-20261111
     provisioner:
       # -- Registry for the CSI Provisioner image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the CSI Provisioner image. When unspecified, Longhorn uses the default value.
       repository: longhornio/csi-provisioner
       # -- Tag for the CSI Provisioner image. When unspecified, Longhorn uses the default value.
-      tag: v6.3.0
+      tag: v6.4.0-20261111
     nodeDriverRegistrar:
       # -- Registry for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value.
       repository: longhornio/csi-node-driver-registrar
       # -- Tag for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value.
-      tag: v2.18.0
+      tag: v2.18.0-20261111
     resizer:
       # -- Registry for the CSI Resizer image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the CSI Resizer image. When unspecified, Longhorn uses the default value.
       repository: longhornio/csi-resizer
       # -- Tag for the CSI Resizer image. When unspecified, Longhorn uses the default value.
-      tag: v2.2.1
+      tag: v2.3.0-20261111
     snapshotter:
       # -- Registry for the CSI Snapshotter image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the CSI Snapshotter image. When unspecified, Longhorn uses the default value.
       repository: longhornio/csi-snapshotter
       # -- Tag for the CSI Snapshotter image. When unspecified, Longhorn uses the default value.
-      tag: v8.6.0
+      tag: v8.7.0-20261111
     livenessProbe:
       # -- Registry for the CSI liveness probe image. When unspecified, Longhorn uses the default value.
       registry: ""
       # -- Repository for the CSI liveness probe image. When unspecified, Longhorn uses the default value.
       repository: longhornio/livenessprobe
       # -- Tag for the CSI liveness probe image. When unspecified, Longhorn uses the default value.
-      tag: v2.20.0
+      tag: v2.20.0-20261111
   openshift:
     oauthProxy:
       # -- Registry for the OAuth Proxy image. Specify the upstream image (for example, "quay.io/openshift/origin-oauth-proxy"). This setting applies only to OpenShift users.
@@ -576,6 +576,16 @@ longhornGlobalManager:
                   values:
                     - longhorn-global-manager
             topologyKey: kubernetes.io/hostname
+  # -- Topology spread constraints for global manager pods. Unlike `longhornGlobalManager.affinity`, these can guarantee that replicas stay spread across a topology domain during a rolling update or a mass reschedule.
+  topologySpreadConstraints: []
+  ## If you want to set topology spread constraints for the global manager Deployment, delete the `[]` in the line above
+  ## and uncomment this example block
+  # - maxSkew: 1
+  #   topologyKey: topology.kubernetes.io/zone
+  #   whenUnsatisfiable: DoNotSchedule
+  #   labelSelector:
+  #     matchLabels:
+  #       app: longhorn-global-manager
   # -- Resource requests and limits for global manager pods. Memory scales with the cluster's Pod count (cluster-wide Pod informer cache).
   resources: ~
   # -- Node tolerations for global manager pods.
