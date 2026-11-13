@@ -17,7 +17,7 @@ questions:
         label: Longhorn Manager Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.manager.tag
-        default: v1.13.0
+        default: v1.13.1-rc1
         description: Tag for the Longhorn Manager image.
         type: string
         label: Longhorn Manager Image Tag
@@ -29,7 +29,7 @@ questions:
         label: Longhorn Engine Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.engine.tag
-        default: v1.13.0
+        default: v1.13.1-rc1
         description: Tag for the Longhorn Engine image.
         type: string
         label: Longhorn Engine Image Tag
@@ -41,7 +41,7 @@ questions:
         label: Longhorn UI Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.ui.tag
-        default: v1.13.0
+        default: v1.13.1-rc1
         description: Tag for the Longhorn UI image.
         type: string
         label: Longhorn UI Image Tag
@@ -53,7 +53,7 @@ questions:
         label: Longhorn Instance Manager Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.instanceManager.tag
-        default: v1.13.0
+        default: v1.13.1-rc1
         description: Tag for the Longhorn Instance Manager image.
         type: string
         label: Longhorn Instance Manager Image Tag
@@ -65,7 +65,7 @@ questions:
         label: Longhorn Share Manager Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.shareManager.tag
-        default: v1.13.0
+        default: v1.13.1-rc1
         description: Tag for the Longhorn Share Manager image.
         type: string
         label: Longhorn Share Manager Image Tag
@@ -78,7 +78,7 @@ questions:
         label: Longhorn Backing Image Manager Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.backingImageManager.tag
-        default: v1.13.0
+        default: v1.13.1-rc1
         description: >-
           Tag for the Backing Image Manager image. When unspecified, Longhorn uses the default value.
         type: string
@@ -91,7 +91,7 @@ questions:
         label: Longhorn Support Bundle Kit Image Repository
         group: Longhorn Images Settings
       - variable: image.longhorn.supportBundleKit.tag
-        default: v0.0.98
+        default: v1.1.0
         description: Tag for the Longhorn Support Bundle Manager image.
         type: string
         label: Longhorn Support Bundle Kit Image Tag
@@ -104,7 +104,7 @@ questions:
         label: Longhorn CSI Attacher Image Repository
         group: Longhorn CSI Driver Images
       - variable: image.csi.attacher.tag
-        default: v4.13.0
+        default: v4.13.0-20261111
         description: >-
           Tag for the CSI attacher image. When unspecified, Longhorn uses the default value.
         type: string
@@ -118,7 +118,7 @@ questions:
         label: Longhorn CSI Provisioner Image Repository
         group: Longhorn CSI Driver Images
       - variable: image.csi.provisioner.tag
-        default: v6.3.0
+        default: v6.4.0-20261111
         description: >-
           Tag for the CSI Provisioner image. When unspecified, Longhorn uses the default value.
         type: string
@@ -132,7 +132,7 @@ questions:
         label: Longhorn CSI Node Driver Registrar Image Repository
         group: Longhorn CSI Driver Images
       - variable: image.csi.nodeDriverRegistrar.tag
-        default: v2.18.0
+        default: v2.18.0-20261111
         description: >-
           Tag for the CSI Node Driver Registrar image. When unspecified, Longhorn uses the default value.
         type: string
@@ -146,7 +146,7 @@ questions:
         label: Longhorn CSI Driver Resizer Image Repository
         group: Longhorn CSI Driver Images
       - variable: image.csi.resizer.tag
-        default: v2.2.1
+        default: v2.3.0-20261111
         description: >-
           Tag for the CSI Resizer image. When unspecified, Longhorn uses the default value.
         type: string
@@ -160,7 +160,7 @@ questions:
         label: Longhorn CSI Driver Snapshotter Image Repository
         group: Longhorn CSI Driver Images
       - variable: image.csi.snapshotter.tag
-        default: v8.6.0
+        default: v8.7.0-20261111
         description: >-
           Tag for the CSI Snapshotter image. When unspecified, Longhorn uses the default value.
         type: string
@@ -174,7 +174,7 @@ questions:
         label: Longhorn CSI Liveness Probe Image Repository
         group: Longhorn CSI Driver Images
       - variable: image.csi.livenessProbe.tag
-        default: v2.20.0
+        default: v2.20.0-20261111
         description: >-
           Tag for the CSI liveness probe image. When unspecified, Longhorn uses the default value.
         type: string
@@ -737,7 +737,7 @@ questions:
         group: Longhorn Default Settings
         type: string
         default: null
-      - variable: defaultSettings.EndpointNetworkForRWXVolume
+      - variable: defaultSettings.endpointNetworkForRWXVolume
         label: Endpoint Network For RWX Volume
         description: >-
           Specifies a dedicated network for mounting RWX (ReadWriteMany) volumes. Leave this blank to use the default Kubernetes cluster network. **Caution**: This setting should change after all RWX volumes are detached because some Longhorn component pods must be recreated to apply the setting. You cannot modify this setting while RWX volumes are still attached.
@@ -846,7 +846,7 @@ questions:
         type: int
         min: 1
         default: 2
-      - variable: defaultSettings.backupBlockSize
+      - variable: defaultSettings.defaultBackupBlockSize
         label: Backup Block Size
         description: >-
           Specifies the default backup block size, in MiB, used when creating a new volume. Supported values are 2 or 16.
@@ -1418,7 +1418,7 @@ questions:
         group: Longhorn Default Resources
         type: string
         default: null
-      - variable: defaultBackupStore.backupstorePollInterval
+      - variable: defaultBackupStore.pollInterval
         label: Backupstore Poll Interval
         description: >-
           Number of seconds that Longhorn waits before checking the backupstore for new backups. The default value is "300". When the value is "0", polling is disabled.
