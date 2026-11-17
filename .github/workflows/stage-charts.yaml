@@ -1,0 +1,75 @@
+name: Stage the charts in the Rancher catalog
+
+# Sends longhorn and longhorn-crd of a release to the staging registry of the Rancher
+# catalog and has rancher/charts ship them: the two charts are made from charts/longhorn
+# of the release branch, stamped with their final version, checked against the catalog
+# rules, packaged and pushed to stgregistry.suse.com/rancher/catalog, and rancher/charts
+# opens a pull request with them against its staging branch.
+#
+# Run it by hand, from this branch, naming the release branch to stage:
+#
+#   gh workflow run stage-charts.yaml --repo longhorn/charts --ref v1.13.x -f branch=v1.12.x
+#
+# It is additive: release-ondemand.yml is not touched.
+#
+# The catalog is for one Rancher version, set in the env block below: change it when the
+# release goes to another. The final version, 1XY.Z.W+upA.B.C, is worked out from the
+# appVersion of the release and the versions already released, so the branch has to be
+# at a release such as v1.12.2. A release candidate whose appVersion is written rc1 does
+# not follow the version rules, which want rc.1.
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "The release branch to stage, such as v1.12.x"
+        required: true
+        type: string
+
+permissions: {}
+
+env:
+  # The Rancher minor the charts are for, and the Kubernetes versions that Longhorn
+  # supports on it, with both bounds.
+  RANCHER_VERSION: "2.16"
+  KUBE_VERSION: ">= 1.34.0-0 < 1.37.0-0"
+
+# Two runs of the same branch could push at the same time, and the check that the version
+# is not in the registry yet and the push are two calls. A second run waits.
+concurrency:
+  group: stage-longhorn-${{ inputs.branch }}
+  cancel-in-progress: false
+
+jobs:
+  stage-charts:
+    name: Stage the charts
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # to log in to Vault with the OIDC token
+    steps:
+      # The script of this branch, and the chart of the release branch.
+      - name: Checkout the workflow
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+
+      - name: Checkout the release
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          ref: ${{ inputs.branch }}
+          path: release
+          persist-credentials: false
+
+      - name: Prepare the charts
+        run: .github/workflows/scripts/prepare-charts.sh release/charts/longhorn "$RUNNER_TEMP/charts"
+
+      # The version is worked out by cargueiro from the appVersion and the versions that
+      # are already released.
+      - name: Stamp, check, package and push the charts, and start the shipping
+        uses: rancher/charts/.github/actions/ship-family-staged@chart-owners
+        with:
+          family: longhorn
+          chart-dirs: |
+            ${{ runner.temp }}/charts/longhorn
+            ${{ runner.temp }}/charts/longhorn-crd
