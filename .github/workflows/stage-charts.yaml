@@ -1,0 +1,317 @@
+name: Stage the charts in the Rancher catalog
+
+# Sends longhorn and longhorn-crd of a release to the staging registry of the Rancher
+# catalog and has rancher/charts ship them: the two charts are made from charts/longhorn
+# at the release commit, stamped with their final version, checked against the catalog
+# rules, packaged and pushed to stgregistry.suse.com/rancher/catalog, and rancher/charts
+# opens a pull request with them against its staging branch.
+#
+# The workflow and the script live on master, and the release to stage is a commit that is
+# checked out next to them. Run it by hand, naming the full commit and the appVersion that
+# the chart of that commit must have:
+#
+#   gh workflow run stage-charts.yaml --repo longhorn/charts --ref master \
+#     -f commit=cf751523d2d1a3451058e5655eda227c0958eccc -f app-version=v1.11.3
+#
+# The release type says what the charts are. release (the default) stages the appVersion as it
+# is, so it has to be a release such as v1.11.3. rc makes a release candidate of the commit: the
+# appVersion of the two charts becomes v<A.B.C>-rc.<number>, whether the commit has v1.13.1 or
+# v1.13.1-rc1, and cargueiro works the version out from it, such as 111.0.0+up1.13.1-rc.2. The
+# number is the candidate: 1 for the first, 2 or more for the ones made to test or fix.
+#
+#   gh workflow run stage-charts.yaml --repo longhorn/charts --ref master \
+#     -f commit=<sha> -f app-version=v1.13.1-rc1 -f release-type=rc -f rc-number=2
+#
+# dry-run (default true) does everything up to the push: it works the version out, stamps,
+# checks and packages the charts, and shows the archives, but it does not push anything and does
+# not start rancher/charts. Set it to false for the real run. debug (default false) adds logs:
+# the tools, the files and the diffs of every step. No log holds a secret: Vault values are
+# only read by the steps that use them, and nothing here prints them.
+#
+#   gh workflow run stage-charts.yaml --repo longhorn/charts --ref master \
+#     -f commit=<sha> -f app-version=v1.13.1-rc1 -f release-type=rc -f rc-number=2 \
+#     -f dry-run=false -f debug=true
+#
+# It is additive: release-ondemand.yml is not touched.
+#
+# Why a commit: a branch moves and a tag can be moved, and a version that is pushed stays in
+# the registry. The "Check the release" step stops the run, before anything is pushed, when
+# the commit is not on a release branch of this repository or its chart is not the release
+# that was asked for.
+#
+# The final version, 1XY.Z.W+upA.B.C, is worked out by cargueiro from the appVersion of the
+# release, the Rancher version and the versions already released, so the commit has to be at
+# a release or a release candidate of one, such as v1.12.2 or v1.13.1-rc1.
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: "The full SHA (40 characters) of the release commit to stage"
+        required: true
+        type: string
+      app-version:
+        description: "The appVersion that charts/longhorn/Chart.yaml of the commit must have, such as v1.11.3"
+        required: true
+        type: string
+      release-type:
+        description: "release stages the appVersion as it is; rc makes a release candidate of it (v<A.B.C>-rc.<number>)"
+        required: true
+        default: release
+        type: choice
+        options:
+          - release
+          - rc
+      rc-number:
+        description: "The number of the release candidate, such as 1 or 2. Used only for the rc type"
+        required: false
+        default: "1"
+        type: string
+      rancher-version:
+        description: "The Rancher minor the charts are for"
+        required: false
+        default: "2.16"
+        type: string
+      kube-version:
+        description: "The Kubernetes versions that the release supports on it, with both bounds"
+        required: false
+        default: ">= 1.34.0-0 < 1.37.0-0"
+        type: string
+      dry-run:
+        description: "true: stamp, check and package only; push nothing and do not start rancher/charts. false: the real run"
+        required: false
+        default: true
+        type: boolean
+      debug:
+        description: "true: log the tools, the files, the diffs and the commands of every step"
+        required: false
+        default: false
+        type: boolean
+
+permissions: {}
+
+# Two runs of the same release could push at the same time, and the check that the version
+# is not in the registry yet and the push are two calls. A second run waits.
+concurrency:
+  group: stage-longhorn-${{ inputs.commit }}
+  cancel-in-progress: false
+
+jobs:
+  stage-charts:
+    name: Stage the charts
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # to log in to Vault with the OIDC token
+    steps:
+      # The inputs and the job, in the log of every run, so that a failure can be read against them.
+      - name: Show the inputs
+        env:
+          INPUTS_COMMIT: ${{ inputs.commit }}
+          INPUTS_APP_VERSION: ${{ inputs.app-version }}
+          INPUTS_RELEASE_TYPE: ${{ inputs.release-type }}
+          INPUTS_RC_NUMBER: ${{ inputs.rc-number }}
+          INPUTS_RANCHER_VERSION: ${{ inputs.rancher-version }}
+          INPUTS_KUBE_VERSION: ${{ inputs.kube-version }}
+          INPUTS_DRY_RUN: ${{ inputs.dry-run }}
+          INPUTS_DEBUG: ${{ inputs.debug }}
+        run: |
+          echo "repository:      ${GITHUB_REPOSITORY}"
+          echo "workflow ref:    ${GITHUB_REF} (${GITHUB_SHA})"
+          echo "actor:           ${GITHUB_ACTOR}"
+          echo "commit:          ${INPUTS_COMMIT}"
+          echo "app-version:     ${INPUTS_APP_VERSION}"
+          echo "release-type:    ${INPUTS_RELEASE_TYPE}$([ "${INPUTS_RELEASE_TYPE}" = "rc" ] && echo " (rc-number ${INPUTS_RC_NUMBER})")"
+          echo "rancher-version: ${INPUTS_RANCHER_VERSION}"
+          echo "kube-version:    ${INPUTS_KUBE_VERSION}"
+          echo "dry-run:         ${INPUTS_DRY_RUN}"
+          echo "debug:           ${INPUTS_DEBUG}"
+          if [ "${INPUTS_DRY_RUN}" = "true" ]; then
+            echo "::notice::Dry run: nothing will be pushed and rancher/charts will not be started."
+          fi
+          if [ "${INPUTS_DEBUG}" = "true" ]; then
+            echo "::group::tools"
+            echo "runner: ${RUNNER_OS} ${RUNNER_ARCH}, image ${ImageOS:-unknown} ${ImageVersion:-unknown}"
+            echo "git:  $(git --version 2>&1 | head -1)"
+            echo "yq:   $(yq --version 2>&1 | head -1)"
+            echo "helm: $(helm version --short 2>&1 | head -1)"
+            echo "curl: $(curl --version 2>&1 | head -1)"
+            echo "::endgroup::"
+          fi
+
+      # The script of this ref (master), and the chart of the release commit.
+      - name: Checkout the workflow
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+
+      # The full history, so that the next step can tell on which branches the commit is.
+      - name: Checkout the release
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          ref: ${{ inputs.commit }}
+          path: release
+          fetch-depth: 0
+          persist-credentials: false
+
+      # Before the script and before the push: the commit must be a full SHA that is on a
+      # release branch of this repository (a SHA of a fork can be fetched too), and its chart
+      # must be the release asked for.
+      - name: Check the release
+        env:
+          COMMIT: ${{ inputs.commit }}
+          WANT: ${{ inputs.app-version }}
+          RELEASE_TYPE: ${{ inputs.release-type }}
+          RC_NUMBER: ${{ inputs.rc-number }}
+          DEBUG: ${{ inputs.debug }}
+        run: |
+          if ! [[ "$COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::commit must be a full SHA of 40 lowercase hexadecimal characters"
+            exit 1
+          fi
+          head=$(git -C release rev-parse HEAD)
+          if [ "$head" != "$COMMIT" ]; then
+            echo "::error::the checkout is at ${head}, not at ${COMMIT}"
+            exit 1
+          fi
+          branches=$(git -C release branch -r --contains "$COMMIT" | sed 's/^ *//' | grep -E '^origin/v[0-9]+\.[0-9]+\.x$' || true)
+          if [ -z "$branches" ]; then
+            echo "::error::the commit ${COMMIT} is not on a release branch (origin/vX.Y.x) of this repository"
+            exit 1
+          fi
+          if [ "$DEBUG" = "true" ]; then
+            echo "::group::the commit"
+            git -C release log -1 --format='%H%n%an <%ae>%n%ad%n%s' --date=iso
+            echo "all branches that contain it: $(git -C release branch -r --contains "$COMMIT" | tr -s ' \n' ' ')"
+            echo "tags that point at it: $(git -C release tag --points-at "$COMMIT" | tr '\n' ' ')"
+            echo "::endgroup::"
+          fi
+          got=$(yq '.appVersion' release/charts/longhorn/Chart.yaml)
+          echo "commit:      ${COMMIT}"
+          echo "branches:    $(echo "$branches" | tr '\n' ' ')"
+          echo "appVersion:  ${got} (expected ${WANT})"
+          if [ "$got" != "$WANT" ]; then
+            echo "::error::charts/longhorn at the commit has appVersion ${got}, not the expected ${WANT}"
+            exit 1
+          fi
+          echo "type:        ${RELEASE_TYPE}$([ "$RELEASE_TYPE" = "rc" ] && echo " (rc number ${RC_NUMBER})")"
+          if [ "$RELEASE_TYPE" = "rc" ] && ! [[ "$RC_NUMBER" =~ ^[1-9][0-9]*$ ]]; then
+            echo "::error::rc-number must be a positive integer for the rc type (got '${RC_NUMBER}')"
+            exit 1
+          fi
+
+      - name: Prepare the charts
+        env:
+          RANCHER_VERSION: ${{ inputs.rancher-version }}
+          KUBE_VERSION: ${{ inputs.kube-version }}
+          RELEASE_TYPE: ${{ inputs.release-type }}
+          RC_NUMBER: ${{ inputs.rc-number }}
+          DEBUG: ${{ inputs.debug }}
+        run: |
+          echo "::group::prepare-charts.sh (type ${RELEASE_TYPE}$([ "$RELEASE_TYPE" = "rc" ] && echo ", rc number ${RC_NUMBER}"))"
+          .github/workflows/scripts/prepare-charts.sh release/charts/longhorn "$RUNNER_TEMP/charts" "$RELEASE_TYPE" "$RC_NUMBER"
+          echo "::endgroup::"
+
+      # The version of the two charts, worked out here so that it is in their Chart.yaml and in
+      # the log before the push. cargueiro reads the appVersion and the tags of the chart in the
+      # staging registry, so it needs the credentials of the registry (read from Vault the way
+      # the action below does; drop this step if the registry can be read anonymously).
+      - name: Load the registry credentials from Vault
+        uses: rancher-eio/read-vault-secrets@7282bf97898cd1c16c89f837e0bb442e6d384c89 # main
+        with:
+          secrets: |
+            secret/data/github/repo/${{ github.repository }}/rancher-prime-stg-registry/credentials username | CARGUEIRO_USERNAME ;
+            secret/data/github/repo/${{ github.repository }}/rancher-prime-stg-registry/credentials password | CARGUEIRO_PASSWORD
+
+      # The same installer as the action, into a folder of this job (not /usr/local/bin).
+      - name: Install cargueiro
+        env:
+          DEBUG: ${{ inputs.debug }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/bin"
+          curl -fsSL https://github.com/rancher/cargueiro/releases/latest/download/install.sh | CARGUEIRO_BIN_DIR="$RUNNER_TEMP/bin" sh -
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/bin/cargueiro" version
+          if [ "$DEBUG" = "true" ]; then
+            echo "installed: $(command -v cargueiro || echo "$RUNNER_TEMP/bin/cargueiro")"
+            ls -l "$RUNNER_TEMP/bin"
+          fi
+
+      # chart-version prints the version of the family, worked out from the main chart (longhorn)
+      # only: the major from its rancher-version annotation, the part after +up from its
+      # appVersion, and the counter from the versions in the registry. It writes nothing, so
+      # the version line of both charts is set here, and the same value goes to the action.
+      - name: Work out the chart version
+        id: chart-version
+        env:
+          DEBUG: ${{ inputs.debug }}
+        run: |
+          set -euo pipefail
+          if [ "$DEBUG" = "true" ]; then
+            echo "::group::the charts before the version is set"
+            for chart in longhorn longhorn-crd; do
+              echo "${chart}: version=$(yq '.version' "$RUNNER_TEMP/charts/${chart}/Chart.yaml") appVersion=$(yq '.appVersion' "$RUNNER_TEMP/charts/${chart}/Chart.yaml") rancher-version='$(yq '.annotations."catalog.cattle.io/rancher-version" // "none"' "$RUNNER_TEMP/charts/${chart}/Chart.yaml")'"
+            done
+            echo "registry username is set: $([ -n "${CARGUEIRO_USERNAME:-}" ] && echo yes || echo NO), password is set: $([ -n "${CARGUEIRO_PASSWORD:-}" ] && echo yes || echo NO)"
+            echo "::endgroup::"
+          fi
+          version=$(cargueiro chart-version --family longhorn "$RUNNER_TEMP/charts/longhorn" "$RUNNER_TEMP/charts/longhorn-crd")
+          echo "chart version: ${version}"
+          for chart in longhorn longhorn-crd; do
+            V="$version" yq -i '.version = strenv(V)' "$RUNNER_TEMP/charts/${chart}/Chart.yaml"
+            echo "${chart}: $(yq '.version' "$RUNNER_TEMP/charts/${chart}/Chart.yaml")"
+          done
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+      # A dry run: the commands of the action up to the push, with the same version. It pushes
+      # nothing and does not start rancher/charts. Stamp changes the copies in the runner only.
+      - name: Stamp, check and package the charts (dry run)
+        if: ${{ inputs.dry-run }}
+        env:
+          VERSION: ${{ steps.chart-version.outputs.version }}
+          DEBUG: ${{ inputs.debug }}
+        run: |
+          set -Eeuo pipefail
+          trap 'echo "::error::This failed: ${BASH_COMMAND}"' ERR
+          dirs=("$RUNNER_TEMP/charts/longhorn" "$RUNNER_TEMP/charts/longhorn-crd")
+          debug_flag=()
+          if [ "$DEBUG" = "true" ]; then debug_flag=(--debug); fi
+
+          echo "::group::cargueiro stamp (dry run, shows the diff)"
+          cargueiro stamp --family longhorn "${dirs[@]}" --version "$VERSION" --dry-run "${debug_flag[@]}"
+          echo "::endgroup::"
+          echo "::group::cargueiro stamp"
+          cargueiro stamp --family longhorn "${dirs[@]}" --version "$VERSION"
+          echo "::endgroup::"
+          echo "::group::cargueiro check chart"
+          cargueiro check chart --family longhorn "${dirs[@]}"
+          echo "::endgroup::"
+          echo "::group::cargueiro package"
+          mapfile -t archives < <(cargueiro package --family longhorn "${dirs[@]}" --output-dir "$RUNNER_TEMP/dry-run")
+          echo "::endgroup::"
+
+          for archive in "${archives[@]}"; do
+            echo "packaged: ${archive} ($(du -h "$archive" | cut -f1))"
+            if [ "$DEBUG" = "true" ]; then
+              echo "::group::${archive##*/}"
+              tar -tzf "$archive" | head -60
+              tar -xzOf "$archive" "$(tar -tzf "$archive" | grep -m1 '/Chart.yaml$')" | head -40
+              echo "::endgroup::"
+            fi
+          done
+          {
+            echo "### Dry run of the Longhorn charts"
+            echo "Version \`${VERSION}\`: stamped, checked and packaged. **Nothing was pushed** and rancher/charts was not started."
+            for archive in "${archives[@]}"; do echo "- \`${archive##*/}\`"; done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # The version is the one worked out above, so the action stamps what was logged.
+      - name: Stamp, check, package and push the charts, and start the shipping
+        if: ${{ !inputs.dry-run }}
+        uses: rancher/charts/.github/actions/ship-family-staged@chart-owners
+        with:
+          family: longhorn
+          version: ${{ steps.chart-version.outputs.version }}
+          chart-dirs: |
+            ${{ runner.temp }}/charts/longhorn
+            ${{ runner.temp }}/charts/longhorn-crd
