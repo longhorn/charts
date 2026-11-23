@@ -220,11 +220,14 @@ jobs:
       # staging registry, so it needs the credentials of the registry (read from Vault the way
       # the action below does; drop this step if the registry can be read anonymously).
       - name: Load the registry credentials from Vault
-        uses: rancher-eio/read-vault-secrets@7282bf97898cd1c16c89f837e0bb442e6d384c89 # main
+        uses: rancher-eio/read-vault-secrets@main
         with:
           secrets: |
-            secret/data/github/repo/${{ github.repository }}/rancher-prime-stg-registry/credentials username | CARGUEIRO_USERNAME ;
-            secret/data/github/repo/${{ github.repository }}/rancher-prime-stg-registry/credentials password | CARGUEIRO_PASSWORD
+            secret/data/github/repo/${{ github.repository }}/rancher-prime-stg-registry/credentials registry | STAGING_REGISTRY ;
+            secret/data/github/repo/${{ github.repository }}/rancher-prime-stg-registry/credentials username | STAGING_REGISTRY_USERNAME ;
+            secret/data/github/repo/${{ github.repository }}/rancher-prime-stg-registry/credentials password | STAGING_REGISTRY_PASSWORD ;
+            github/token/rancher--charts--actions--write token | GH_TOKEN
+
 
       # The same installer as the action, into a folder of this job (not /usr/local/bin).
       - name: Install cargueiro
@@ -255,7 +258,7 @@ jobs:
             for chart in longhorn longhorn-crd; do
               echo "${chart}: version=$(yq '.version' "$RUNNER_TEMP/charts/${chart}/Chart.yaml") appVersion=$(yq '.appVersion' "$RUNNER_TEMP/charts/${chart}/Chart.yaml") rancher-version='$(yq '.annotations."catalog.cattle.io/rancher-version" // "none"' "$RUNNER_TEMP/charts/${chart}/Chart.yaml")'"
             done
-            echo "registry username is set: $([ -n "${CARGUEIRO_USERNAME:-}" ] && echo yes || echo NO), password is set: $([ -n "${CARGUEIRO_PASSWORD:-}" ] && echo yes || echo NO)"
+            echo "registry username is set: $([ -n "${STAGING_REGISTRY_USERNAME:-}" ] && echo yes || echo NO), password is set: $([ -n "${STAGING_REGISTRY_PASSWORD:-}" ] && echo yes || echo NO)"
             echo "::endgroup::"
           fi
           version=$(cargueiro chart-version --family longhorn "$RUNNER_TEMP/charts/longhorn" "$RUNNER_TEMP/charts/longhorn-crd")
