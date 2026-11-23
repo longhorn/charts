@@ -314,8 +314,15 @@ jobs:
             echo "packaged: ${archive} ($(du -h "$archive" | cut -f1))"
             if [ "$DEBUG" = "true" ]; then
               echo "::group::${archive##*/}"
-              tar -tzf "$archive" | head -60
-              tar -xzOf "$archive" "$(tar -tzf "$archive" | grep -m1 '/Chart.yaml$')" | head -40
+              # Read the whole listing first, and use sed and a here-string instead of head and
+              # grep -m1 on a pipe: with pipefail, a reader that stops early makes tar fail
+              # (and the ERR trap would also print into a command substitution).
+              listing=$(tar -tzf "$archive")
+              sed -n '1,60p' <<< "$listing"
+              member=$(grep -m1 '/Chart.yaml$' <<< "$listing" || true)
+              if [ -n "$member" ]; then
+                tar -xzOf "$archive" "$member" | sed -n '1,40p'
+              fi
               echo "::endgroup::"
             fi
           done
