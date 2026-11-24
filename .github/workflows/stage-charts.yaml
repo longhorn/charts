@@ -22,6 +22,18 @@ name: Stage the charts in the Rancher catalog
 #   gh workflow run stage-charts.yaml --repo longhorn/charts --ref master \
 #     -f commit=<sha> -f app-version=v1.13.1-rc1 -f release-type=rc -f rc-number=2
 #
+# version (optional) is the final chart version, 1XY.Z.W+upA.B.C. Cargueiro never changes Z: it
+# adds 1 to W after the highest version in the staging registry. Rancher charts of Longhorn change
+# Z for a new upstream minor and W for a patch (111.0.0+up1.11.3, 111.1.0+up1.12.1,
+# 111.1.1+up1.12.2), so give the version when the one cargueiro would pick is not that:
+#
+#   gh workflow run stage-charts.yaml --repo longhorn/charts --ref v1.13.x \
+#     -f commit=<sha> -f app-version=v1.12.2 -f version=111.1.0+up1.12.2
+#
+# Give the version of the release, without a suffix. For the rc type the workflow adds
+# -rc.<rc-number> to it: version=111.1.0+up1.12.2 with release-type=rc and rc-number=1 stages
+# 111.1.0+up1.12.2-rc.1.
+#
 # dry-run (default true) does everything up to the push: it works the version out, stamps,
 # checks and packages the charts, and shows the archives, but it does not push anything and does
 # not start rancher/charts. Set it to false for the real run. debug (default false) adds logs:
@@ -76,6 +88,11 @@ on:
         description: "The Kubernetes versions that the release supports on it, with both bounds"
         required: false
         default: ">= 1.34.0-0 < 1.37.0-0"
+        type: string
+      version:
+        description: "The chart version of the release, such as 111.1.0+up1.12.2, without an rc suffix: for the rc type -rc.<rc-number> is added. Leave it empty to have cargueiro work it out, which only adds 1 to the last number"
+        required: false
+        default: ""
         type: string
       dry-run:
         description: "true: stamp, check and package only; push nothing and do not start rancher/charts. false: the real run"
@@ -166,6 +183,7 @@ jobs:
           WANT: ${{ inputs.app-version }}
           RELEASE_TYPE: ${{ inputs.release-type }}
           RC_NUMBER: ${{ inputs.rc-number }}
+          VERSION: ${{ inputs.version }}
           DEBUG: ${{ inputs.debug }}
         run: |
           if ! [[ "$COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
@@ -201,6 +219,27 @@ jobs:
           if [ "$RELEASE_TYPE" = "rc" ] && ! [[ "$RC_NUMBER" =~ ^[1-9][0-9]*$ ]]; then
             echo "::error::rc-number must be a positive integer for the rc type (got '${RC_NUMBER}')"
             exit 1
+          fi
+          # A given version is not compared by cargueiro with the appVersion ("whoever gives
+          # --version owns it"), so compare it here. It is the version of the release, with no
+          # suffix: the part after +up must be the appVersion without the v (and without -rcN).
+          # For the rc type -rc.<rc-number> is added to it in the next steps. The major (111) is
+          # checked by cargueiro against the Rancher version.
+          echo "version:     ${VERSION:-worked out by cargueiro}"
+          if [ -n "$VERSION" ]; then
+            if ! [[ "$VERSION" =~ ^[0-9]{3}\.[0-9]+\.[0-9]+\+up([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+              echo "::error::version ${VERSION} must look like 111.1.0+up1.12.2, with no rc suffix (it is added for the rc type)"
+              exit 1
+            fi
+            upstream="${BASH_REMATCH[1]}"
+            expected=$(echo "${WANT#v}" | sed -E 's/-rc\.?[0-9]+$//')
+            if [ "$upstream" != "$expected" ]; then
+              echo "::error::version ${VERSION} has the upstream part ${upstream}, but the appVersion ${WANT} gives ${expected}"
+              exit 1
+            fi
+            if [ "$RELEASE_TYPE" = "rc" ]; then
+              echo "chart version of this run: ${VERSION}-rc.${RC_NUMBER}"
+            fi
           fi
 
       - name: Prepare the charts
@@ -251,6 +290,9 @@ jobs:
         id: chart-version
         env:
           DEBUG: ${{ inputs.debug }}
+          GIVEN_VERSION: ${{ inputs.version }}
+          RELEASE_TYPE: ${{ inputs.release-type }}
+          RC_NUMBER: ${{ inputs.rc-number }}
         run: |
           set -euo pipefail
           if [ "$DEBUG" = "true" ]; then
@@ -261,8 +303,16 @@ jobs:
             echo "registry username is set: $([ -n "${STAGING_REGISTRY_USERNAME:-}" ] && echo yes || echo NO), password is set: $([ -n "${STAGING_REGISTRY_PASSWORD:-}" ] && echo yes || echo NO)"
             echo "::endgroup::"
           fi
-          version=$(cargueiro chart-version --family longhorn "$RUNNER_TEMP/charts/longhorn" "$RUNNER_TEMP/charts/longhorn-crd")
-          echo "chart version: ${version}"
+          if [ -n "$GIVEN_VERSION" ]; then
+            version="$GIVEN_VERSION"
+            if [ "$RELEASE_TYPE" = "rc" ]; then
+              version="${GIVEN_VERSION}-rc.${RC_NUMBER}"
+            fi
+            echo "chart version: ${version} (given, not worked out; cargueiro would have picked: $(cargueiro chart-version --family longhorn "$RUNNER_TEMP/charts/longhorn" "$RUNNER_TEMP/charts/longhorn-crd" 2>&1 || echo "unknown"))"
+          else
+            version=$(cargueiro chart-version --family longhorn "$RUNNER_TEMP/charts/longhorn" "$RUNNER_TEMP/charts/longhorn-crd")
+            echo "chart version: ${version}"
+          fi
           for chart in longhorn longhorn-crd; do
             V="$version" yq -i '.version = strenv(V)' "$RUNNER_TEMP/charts/${chart}/Chart.yaml"
             echo "${chart}: $(yq '.version' "$RUNNER_TEMP/charts/${chart}/Chart.yaml")"
