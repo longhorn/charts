@@ -22,6 +22,18 @@ name: Stage the charts in the Rancher catalog
 #   gh workflow run stage-charts.yaml --repo longhorn/charts --ref master \
 #     -f commit=<sha> -f app-version=v1.13.1-rc1 -f release-type=rc -f rc-number=2
 #
+# version (optional) is the final chart version, 1XY.Z.W+upA.B.C. Cargueiro never changes Z: it
+# adds 1 to W after the highest version in the staging registry. Rancher charts of Longhorn change
+# Z for a new upstream minor and W for a patch (111.0.0+up1.11.3, 111.1.0+up1.12.1,
+# 111.1.1+up1.12.2), so give the version when the one cargueiro would pick is not that:
+#
+#   gh workflow run stage-charts.yaml --repo longhorn/charts --ref v1.13.x \
+#     -f commit=<sha> -f app-version=v1.12.2 -f version=111.1.0+up1.12.2
+#
+# Give the version of the release, without a suffix. For the rc type the workflow adds
+# -rc.<rc-number> to it: version=111.1.0+up1.12.2 with release-type=rc and rc-number=1 stages
+# 111.1.0+up1.12.2-rc.1.
+#
 # dry-run (default true) does everything up to the push: it works the version out, stamps,
 # checks and packages the charts, and shows the archives, but it does not push anything and does
 # not start rancher/charts. Set it to false for the real run. debug (default false) adds logs:
@@ -76,6 +88,11 @@ on:
         description: "The Kubernetes versions that the release supports on it, with both bounds"
         required: false
         default: ">= 1.34.0-0 < 1.37.0-0"
+        type: string
+      version:
+        description: "The chart version of the release, such as 111.1.0+up1.12.2, without an rc suffix: for the rc type -rc.<rc-number> is added. Leave it empty to have cargueiro work it out, which only adds 1 to the last number"
+        required: false
+        default: ""
         type: string
       dry-run:
         description: "true: stamp, check and package only; push nothing and do not start rancher/charts. false: the real run"
@@ -166,6 +183,7 @@ jobs:
           WANT: ${{ inputs.app-version }}
           RELEASE_TYPE: ${{ inputs.release-type }}
           RC_NUMBER: ${{ inputs.rc-number }}
+          VERSION: ${{ inputs.version }}
           DEBUG: ${{ inputs.debug }}
         run: |
           if ! [[ "$COMMIT" =~ ^[0-9a-f]{40}$ ]]; then
@@ -202,6 +220,27 @@ jobs:
             echo "::error::rc-number must be a positive integer for the rc type (got '${RC_NUMBER}')"
             exit 1
           fi
+          # A given version is not compared by cargueiro with the appVersion ("whoever gives
+          # --version owns it"), so compare it here. It is the version of the release, with no
+          # suffix: the part after +up must be the appVersion without the v (and without -rcN).
+          # For the rc type -rc.<rc-number> is added to it in the next steps. The major (111) is
+          # checked by cargueiro against the Rancher version.
+          echo "version:     ${VERSION:-worked out by cargueiro}"
+          if [ -n "$VERSION" ]; then
+            if ! [[ "$VERSION" =~ ^[0-9]{3}\.[0-9]+\.[0-9]+\+up([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+              echo "::error::version ${VERSION} must look like 111.1.0+up1.12.2, with no rc suffix (it is added for the rc type)"
+              exit 1
+            fi
+            upstream="${BASH_REMATCH[1]}"
+            expected=$(echo "${WANT#v}" | sed -E 's/-rc\.?[0-9]+$//')
+            if [ "$upstream" != "$expected" ]; then
+              echo "::error::version ${VERSION} has the upstream part ${upstream}, but the appVersion ${WANT} gives ${expected}"
+              exit 1
+            fi
+            if [ "$RELEASE_TYPE" = "rc" ]; then
+              echo "chart version of this run: ${VERSION}-rc.${RC_NUMBER}"
+            fi
+          fi
 
       - name: Prepare the charts
         env:
@@ -220,11 +259,14 @@ jobs:
       # staging registry, so it needs the credentials of the registry (read from Vault the way
       # the action below does; drop this step if the registry can be read anonymously).
       - name: Load the registry credentials from Vault
-        uses: rancher-eio/read-vault-secrets@7282bf97898cd1c16c89f837e0bb442e6d384c89 # main
+        uses: rancher-eio/read-vault-secrets@main
         with:
           secrets: |
-            secret/data/github/repo/${{ github.repository }}/rancher-prime-stg-registry/credentials username | CARGUEIRO_USERNAME ;
-            secret/data/github/repo/${{ github.repository }}/rancher-prime-stg-registry/credentials password | CARGUEIRO_PASSWORD
+            secret/data/github/repo/${{ github.repository }}/rancher-prime-stg-registry/credentials registry | STAGING_REGISTRY ;
+            secret/data/github/repo/${{ github.repository }}/rancher-prime-stg-registry/credentials username | STAGING_REGISTRY_USERNAME ;
+            secret/data/github/repo/${{ github.repository }}/rancher-prime-stg-registry/credentials password | STAGING_REGISTRY_PASSWORD ;
+            github/token/rancher--charts--actions--write token | GH_TOKEN
+
 
       # The same installer as the action, into a folder of this job (not /usr/local/bin).
       - name: Install cargueiro
@@ -248,6 +290,9 @@ jobs:
         id: chart-version
         env:
           DEBUG: ${{ inputs.debug }}
+          GIVEN_VERSION: ${{ inputs.version }}
+          RELEASE_TYPE: ${{ inputs.release-type }}
+          RC_NUMBER: ${{ inputs.rc-number }}
         run: |
           set -euo pipefail
           if [ "$DEBUG" = "true" ]; then
@@ -255,11 +300,19 @@ jobs:
             for chart in longhorn longhorn-crd; do
               echo "${chart}: version=$(yq '.version' "$RUNNER_TEMP/charts/${chart}/Chart.yaml") appVersion=$(yq '.appVersion' "$RUNNER_TEMP/charts/${chart}/Chart.yaml") rancher-version='$(yq '.annotations."catalog.cattle.io/rancher-version" // "none"' "$RUNNER_TEMP/charts/${chart}/Chart.yaml")'"
             done
-            echo "registry username is set: $([ -n "${CARGUEIRO_USERNAME:-}" ] && echo yes || echo NO), password is set: $([ -n "${CARGUEIRO_PASSWORD:-}" ] && echo yes || echo NO)"
+            echo "registry username is set: $([ -n "${STAGING_REGISTRY_USERNAME:-}" ] && echo yes || echo NO), password is set: $([ -n "${STAGING_REGISTRY_PASSWORD:-}" ] && echo yes || echo NO)"
             echo "::endgroup::"
           fi
-          version=$(cargueiro chart-version --family longhorn "$RUNNER_TEMP/charts/longhorn" "$RUNNER_TEMP/charts/longhorn-crd")
-          echo "chart version: ${version}"
+          if [ -n "$GIVEN_VERSION" ]; then
+            version="$GIVEN_VERSION"
+            if [ "$RELEASE_TYPE" = "rc" ]; then
+              version="${GIVEN_VERSION}-rc.${RC_NUMBER}"
+            fi
+            echo "chart version: ${version} (given, not worked out; cargueiro would have picked: $(cargueiro chart-version --family longhorn "$RUNNER_TEMP/charts/longhorn" "$RUNNER_TEMP/charts/longhorn-crd" 2>&1 || echo "unknown"))"
+          else
+            version=$(cargueiro chart-version --family longhorn "$RUNNER_TEMP/charts/longhorn" "$RUNNER_TEMP/charts/longhorn-crd")
+            echo "chart version: ${version}"
+          fi
           for chart in longhorn longhorn-crd; do
             V="$version" yq -i '.version = strenv(V)' "$RUNNER_TEMP/charts/${chart}/Chart.yaml"
             echo "${chart}: $(yq '.version' "$RUNNER_TEMP/charts/${chart}/Chart.yaml")"
@@ -314,8 +367,15 @@ jobs:
             echo "packaged: ${archive} ($(du -h "$archive" | cut -f1))"
             if [ "$DEBUG" = "true" ]; then
               echo "::group::${archive##*/}"
-              tar -tzf "$archive" | head -60
-              tar -xzOf "$archive" "$(tar -tzf "$archive" | grep -m1 '/Chart.yaml$')" | head -40
+              # Read the whole listing first, and use sed and a here-string instead of head and
+              # grep -m1 on a pipe: with pipefail, a reader that stops early makes tar fail
+              # (and the ERR trap would also print into a command substitution).
+              listing=$(tar -tzf "$archive")
+              sed -n '1,60p' <<< "$listing"
+              member=$(grep -m1 '/Chart.yaml$' <<< "$listing" || true)
+              if [ -n "$member" ]; then
+                tar -xzOf "$archive" "$member" | sed -n '1,40p'
+              fi
               echo "::endgroup::"
             fi
           done
