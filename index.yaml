@@ -285,6 +285,66 @@ entries:
     urls:
     - https://github.com/longhorn/charts/releases/download/longhorn-1.11.0/longhorn-1.11.0.tgz
     version: 1.11.0
+  - annotations:
+      helm.sh/images: |-
+        - name: longhorn-engine
+          image: longhornio/longhorn-engine:v1.10.5
+        - name: longhorn-manager
+          image: longhornio/longhorn-manager:v1.10.5
+        - name: longhorn-ui
+          image: longhornio/longhorn-ui:v1.10.5
+        - name: longhorn-instance-manager
+          image: longhornio/longhorn-instance-manager:v1.10.5
+        - name: longhorn-share-manager
+          image: longhornio/longhorn-share-manager:v1.10.5
+        - name: backing-image-manager
+          image: longhornio/backing-image-manager:v1.10.5
+        - name: support-bundle-kit
+          image: longhornio/support-bundle-kit:v0.0.99
+        - name: csi-attacher
+          image: longhornio/csi-attacher:v4.13.1-20261126
+        - name: csi-provisioner
+          image: longhornio/csi-provisioner:v5.3.0-20261123
+        - name: csi-node-driver-registrar
+          image: longhornio/csi-node-driver-registrar:v2.18.1
+        - name: csi-resizer
+          image: longhornio/csi-resizer:v1.14.0-20261123
+        - name: csi-snapshotter
+          image: longhornio/csi-snapshotter:v8.7.1-20261126
+        - name: livenessprobe
+          image: longhornio/livenessprobe:v2.20.1
+    apiVersion: v1
+    appVersion: v1.10.5
+    created: "2026-11-27T07:37:57.192809003Z"
+    description: Longhorn is a distributed block storage system for Kubernetes.
+    digest: 1aaae52342f8f935ebc677e2e40442c52d2d5e11cbcbb7d2f373cf7d1b3974c0
+    home: https://github.com/longhorn/longhorn
+    icon: https://raw.githubusercontent.com/cncf/artwork/master/projects/longhorn/icon/color/longhorn-icon-color.png
+    keywords:
+    - longhorn
+    - storage
+    - distributed
+    - block
+    - device
+    - iscsi
+    - nfs
+    kubeVersion: '>=1.25.0-0'
+    maintainers:
+    - email: maintainers@longhorn.io
+      name: Longhorn maintainers
+    name: longhorn
+    sources:
+    - https://github.com/longhorn/longhorn
+    - https://github.com/longhorn/longhorn-engine
+    - https://github.com/longhorn/longhorn-instance-manager
+    - https://github.com/longhorn/longhorn-share-manager
+    - https://github.com/longhorn/longhorn-manager
+    - https://github.com/longhorn/longhorn-ui
+    - https://github.com/longhorn/longhorn-tests
+    - https://github.com/longhorn/backing-image-manager
+    urls:
+    - https://github.com/longhorn/charts/releases/download/longhorn-1.10.5/longhorn-1.10.5.tgz
+    version: 1.10.5
   - apiVersion: v1
     appVersion: v1.10.2
     created: "2026-01-28T09:25:23.855241469Z"
@@ -1788,4 +1848,4 @@ entries:
     urls:
     - https://github.com/longhorn/charts/releases/download/longhorn-1.0.0/longhorn-1.0.0.tgz
     version: 1.0.0
-generated: "2026-11-09T07:06:52.546761115Z"
+generated: "2026-11-27T07:37:57.1928804Z"
